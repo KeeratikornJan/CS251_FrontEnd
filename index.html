@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blood Bank Management System | Home</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- CSS -->
+    <link rel="stylesheet" href="donor_pages/css/style.css">
+</head>
+<body>
+    <div class="background-animation">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+        <div class="grid-overlay"></div>
+    </div>
+
+    <main class="container">
+        <div class="glass-card">
+            <div class="logo-container">
+                <i class="fa-solid fa-droplet logo-icon"></i>
+            </div>
+            <h1 class="title">Blood Bank<br><span class="highlight">Management System</span></h1>
+            <p class="description">
+                ระบบจัดการธนาคารเลือดที่ทันสมัย รวดเร็ว และปลอดภัย<br>
+                บูรณาการข้อมูลครบวงจรเพื่อการให้โลหิตที่มีประสิทธิภาพสูงสุด
+            </p>
+
+            <h2 class="subtitle">กรุณาเลือกประเภทผู้ใช้งาน</h2>
+
+            <div class="button-group">
+                <a href="donor_pages/html/donor/donor-login.html" class="btn btn-donor" id="donorBtn">
+                    <div class="btn-content">
+                        <i class="fa-solid fa-hand-holding-heart"></i>
+                        <span>เข้าสู่ระบบผู้บริจาค<br><small>(Donor)</small></span>
+                    </div>
+                </a>
+                
+                <a href="#" class="btn btn-staff" id="staffBtn">
+                    <div class="btn-content">
+                        <i class="fa-solid fa-user-doctor"></i>
+                        <span>เข้าสู่ระบบเจ้าหน้าที่<br><small>(Staff)</small></span>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </main>
+    
+    <script src="donor_pages/js/script.js"></script>
+</body>
+</html>

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Donor Login | Blood Bank</title>
+    <!-- Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body class="donor-portal">
+    <div class="background-animation"></div>
+
+    <main class="container" style="max-width: 500px; display: flex; justify-content: center; align-items: center; min-height: 100vh;">
+        <div class="stat-card donor-login-card" style="width: 100%; text-align: center;">
+            <div class="donor-login-logo">
+                <i class="fa-solid fa-heart"></i>
+            </div>
+            <h1 style="font-size: 2.2rem; margin-bottom: 0.5rem; font-family: 'Outfit'; font-weight: 700; color: #4a5568;">Donor<span style="color: var(--primary);">Login</span></h1>
+            <p style="margin-bottom: 2.5rem; color: #718096; font-size: 1.1rem;">เข้าสู่ระบบสำหรับผู้บริจาคโลหิต</p>
+
+            <form id="donorLoginForm" style="text-align: left;">
+                <div class="form-group" style="margin-bottom: 1.5rem;">
+                    <label class="form-label" style="color: #4a5568;">Username</label>
+                    <input type="text" id="donorIdInput" class="form-control" placeholder="XXXXXXXXXX" style="border-radius: 12px; padding: 1.2rem;">
+                </div>
+                <div class="form-group" style="margin-bottom: 2.5rem;">
+                    <label class="form-label" style="color: #4a5568;">Password</label>
+                    <input type="password" id="donorPasswordInput" class="form-control" placeholder="............." style="border-radius: 12px; padding: 1.2rem;">
+                </div>
+                
+                <button type="submit" class="btn btn-donor" style="width: 100%; max-width: 100%; background: #da292e; color: white; border: none; padding: 1.2rem; border-radius: 16px; box-shadow: 0 8px 20px rgba(218, 41, 46, 0.3);">
+                    <span style="font-size: 1.75rem; font-weight: 700;">Login</span>
+                </button>
+
+                <div style="text-align: center; margin-top: 2rem;">
+                    <p style="color: #718096; font-size: 1rem;">
+                        ยังไม่มีบัญชีผู้ใช้ใช่หรือไม่? 
+                        <a href="donor-registration.html" style="color: var(--primary); font-weight: 600; text-decoration: none;">ลงทะเบียนที่นี่</a>
+                    </p>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <script src="../../js/script.js"></script>
+</body>
+</html>

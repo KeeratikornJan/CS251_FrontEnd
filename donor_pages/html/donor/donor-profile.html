@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Donor Profile | Blood Bank</title>
+    <!-- Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body class="dashboard-body donor-portal">
+    <div class="background-animation"></div>
+
+    <div class="dashboard-wrapper">
+        <!-- Sidebar -->
+        <aside class="sidebar donor-sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="#da292e"/>
+                    </svg>
+                    <h2 style="margin: 0; font-family: 'Outfit'; font-weight: 700; color: #4a5568;">BloodBank</h2>
+                </div>
+                <button class="close-sidebar-btn" id="closeSidebarBtn">&times;</button>
+            </div>
+            <div class="sidebar-menu">
+                <a href="donor-dashboard.html" class="menu-item">
+                    <i class="fa-solid fa-table-columns"></i> Dashboard
+                </a>
+                <a href="donation-history.html" class="menu-item">
+                    <i class="fa-solid fa-history"></i> ประวัติการบริจาค
+                </a>
+                <a href="donor-profile.html" class="menu-item active">
+                    <i class="fa-solid fa-user-circle"></i> ข้อมูลส่วนตัว
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Wrapper -->
+        <div class="main-wrapper" id="mainContent">
+            <!-- Topbar -->
+            <header class="topbar">
+                <button class="menu-toggle" id="menuToggle">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+                <div style="flex: 1;"></div>
+                <div class="user-profile">
+                    <div class="user-info">
+                        <div class="user-name">คุณศุภ สง่ารวงวงศ์</div>
+                        <div class="user-id">DON-12345</div>
+                    </div>
+                    <a href="../../index.html" class="logout-btn" style="border: 1px solid var(--primary); background: white; color: var(--primary); border-radius: 8px; padding: 6px 16px; display: flex; align-items: center; gap: 8px; font-weight: 500;">
+                        <i class="fa-solid fa-sign-out-alt"></i> Logout
+                    </a>
+                </div>
+            </header>
+
+            <!-- Content -->
+            <main class="dashboard-content">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                    <h1 class="page-title" style="margin-bottom: 0;">ข้อมูลส่วนตัว (Profile)</h1>
+                    <button id="editProfileBtn" class="btn btn-donor" style="min-width: unset; width: auto; padding: 0.8rem 1.5rem; border-radius: 8px;">
+                        <span style="font-size: 1rem; color: white; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-pen"></i> แก้ไขข้อมูล</span>
+                    </button>
+                </div>
+
+                <div class="stat-card" style="padding: 3rem; max-width: 900px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); border-color: #f1f1f1;">
+                    <form id="profileForm" class="form-container" style="margin-top: 0;">
+                        <span class="profile-section-title">ข้อมูลส่วนตัว</span>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label class="form-label">รหัสผู้บริจาค</label>
+                                <input type="text" class="form-control profile-input-gray" value="DON-12345" disabled style="color: var(--primary);">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">เลขบัตรประชาชน</label>
+                                <input type="text" class="form-control profile-input-gray" value="1-2345-67890-12-3" disabled style="color: var(--primary);">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">ชื่อ-นามสกุล</label>
+                                <input type="text" class="form-control profile-input-gray" value="ศุภ สง่ารวงวงศ์" disabled>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">วันเกิด</label>
+                                <input type="text" class="form-control profile-input-gray" value="15-05-1999" disabled>
+                            </div>
+                        </div>
+
+                        <span class="profile-section-title">ข้อมูลติดต่อ</span>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label class="form-label">เบอร์โทรศัพท์</label>
+                                <input type="tel" class="form-control profile-input-gray" value="081-234-5678" disabled>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">อีเมล</label>
+                                <input type="email" class="form-control profile-input-gray" value="donor@example.com" disabled>
+                            </div>
+                            <div class="form-group full-width">
+                                <label class="form-label">ที่อยู่</label>
+                                <textarea class="form-control profile-input-gray" disabled style="min-height: 80px;">11/2 หมู่3 ตำบลคลองหนึ่ง อำเภอคลองหลวง จังหวัดปทุมธานี 12142</textarea>
+                            </div>
+                        </div>
+
+                        <span class="profile-section-title">ข้อมูลสุขภาพ</span>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label class="form-label">กรุ๊ปเลือด (Blood Group)</label>
+                                <input type="text" class="form-control profile-input-gray" value="O" disabled style="color: var(--primary);">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Rh Factor</label>
+                                <input type="text" class="form-control profile-input-gray" value="Positive (+)" disabled style="color: var(--primary);">
+                            </div>
+                            <div class="form-group full-width">
+                                <label class="form-label">โรคประจำตัว (หากไม่มีโปรดระบุ "ไม่มี")</label>
+                                <input type="text" class="form-control profile-input-gray" value="ไม่มี" disabled>
+                            </div>
+                        </div>
+
+                        <div style="display: flex; justify-content: flex-end; margin-top: 2.5rem;">
+                            <button type="button" class="btn btn-donor" style="min-width: unset; width: auto; padding: 0.75rem 2rem; border-radius: 12px; background: #da292e; color: white; border: none; font-size: 1.15rem; font-weight: 700;">
+                                แก้ไขข้อมูลส่วนตัว
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script src="../../js/script.js"></script>
+    <script>
+        // Specific logic for profile page
+        document.addEventListener('DOMContentLoaded', () => {
+            const editBtn = document.getElementById('editProfileBtn');
+            const saveContainer = document.getElementById('saveProfileContainer');
+            const profileInputs = document.querySelectorAll('.profile-input');
+            const profileForm = document.getElementById('profileForm');
+            const alertBox = document.getElementById('profileAlert');
+
+            if (editBtn) {
+                editBtn.addEventListener('click', () => {
+                    // Toggle edit mode
+                    const isEditing = saveContainer.style.display === 'block';
+
+                    if (!isEditing) {
+                        profileInputs.forEach(input => {
+                            input.removeAttribute('disabled');
+                            input.style.background = '#fff';
+                            input.style.borderColor = 'var(--primary)';
+                        });
+                        saveContainer.style.display = 'block';
+                        editBtn.innerHTML = '<span style="font-size: 1rem; color: #4a5568;"><i class="fa-solid fa-times"></i> ยกเลิก</span>';
+                        editBtn.className = 'btn btn-staff';
+                        editBtn.style.minWidth = 'unset';
+                        editBtn.style.width = 'auto';
+                        editBtn.style.padding = '0.8rem 1.5rem';
+                        alertBox.style.display = 'none';
+                    } else {
+                        profileInputs.forEach(input => {
+                            input.setAttribute('disabled', 'true');
+                            input.style.borderColor = '#e2e8f0';
+                        });
+                        saveContainer.style.display = 'none';
+                        editBtn.innerHTML = '<span style="font-size: 1rem; color: white; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-pen"></i> แก้ไขข้อมูล</span>';
+                        editBtn.className = 'btn btn-donor';
+                        editBtn.style.minWidth = 'unset';
+                        editBtn.style.width = 'auto';
+                        editBtn.style.padding = '0.8rem 1.5rem';
+                    }
+                });
+            }
+
+            if (profileForm) {
+                profileForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    
+                    // Simulate save logic
+                    setTimeout(() => {
+                        // Switch back to view mode
+                        profileInputs.forEach(input => {
+                            input.setAttribute('disabled', 'true');
+                            input.style.borderColor = '#e2e8f0';
+                        });
+                        saveContainer.style.display = 'none';
+                        editBtn.innerHTML = '<span style="font-size: 1rem; color: white; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-pen"></i> แก้ไขข้อมูล</span>';
+                        editBtn.className = 'btn btn-donor';
+                        editBtn.style.minWidth = 'unset';
+                        editBtn.style.width = 'auto';
+                        editBtn.style.padding = '0.8rem 1.5rem';
+
+                        // Show success alert
+                        alertBox.style.display = 'block';
+
+                        // Optional ripple effect inside timeout
+                    }, 500);
+                });
+            }
+        });
+    </script>
+</body>
+</html>
