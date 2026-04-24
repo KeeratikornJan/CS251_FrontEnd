@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Donor Management | BloodBank Staff</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <link rel="stylesheet" href="layout.css" />
+  <link rel="stylesheet" href="donor-management.css" />
+  <link rel="stylesheet" href="compact.css" />
+</head>
+<body data-active-menu="donors">
+  <div id="layoutRoot">
+    <main class="page-content" id="pageContent">
+      <section class="page-head">
+        <h1>จัดการข้อมูลผู้บริจาค</h1>
+        <a class="add-donor-btn" href="add-donor.html">
+          <i class="fa-solid fa-user-plus"></i>
+          เพิ่มผู้บริจาคใหม่
+        </a>
+      </section>
+
+      <section class="donor-panel">
+        <div class="toolbar">
+          <label class="search-box">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input id="searchInput" type="search" placeholder="ค้นหาชื่อ, รหัสผู้บริจาค (DON-XXXXX)" />
+          </label>
+
+          <select id="bloodFilter" aria-label="กรองกรุ๊ปเลือด">
+            <option value="all">ทุกกรุ๊ปเลือด</option>
+            <option value="A">A</option>
+            <option value="B">B</option>
+            <option value="AB">AB</option>
+            <option value="O">O</option>
+          </select>
+
+          <select id="statusFilter" aria-label="กรองสถานะ">
+            <option value="all">ทุกสถานะ</option>
+            <option value="ปกติ">ปกติ</option>
+            <option value="ระงับ">ระงับ (มีอาการไว)</option>
+            <option value="ผู้บริจาคใหม่">ผู้บริจาคใหม่</option>
+          </select>
+        </div>
+
+        <div class="table-card">
+          <table>
+            <thead>
+              <tr>
+                <th>DONOR ID</th>
+                <th>ชื่อ-นามสกุล</th>
+                <th>กรุ๊ปเลือด</th>
+                <th>บริจาคล่าสุด</th>
+                <th>สถานะสิทธิ์</th>
+                <th>การจัดการ</th>
+              </tr>
+            </thead>
+            <tbody id="donorTableBody"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="layout.js"></script>
+  <script src="donor-management.js"></script>
+</body>
+</html>
