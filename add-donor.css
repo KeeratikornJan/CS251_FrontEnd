@@ -1,0 +1,148 @@
+body {
+  background: #fffafa;
+}
+
+.page-content {
+  padding: 26px 42px 56px;
+}
+
+.title-row {
+  max-width: 900px;
+  margin: 0 auto 20px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.back-link {
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+}
+
+h1 {
+  margin: 0;
+  font-size: 31px;
+  line-height: 1.2;
+}
+
+.form-card {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 34px 78px 28px;
+  background: #fff;
+  border: 1px solid #dfe2ea;
+  border-radius: 11px;
+  box-shadow: 0 4px 8px rgba(44, 48, 73, 0.13);
+}
+
+.form-section + .form-section {
+  margin-top: 22px;
+}
+
+h2 {
+  margin: 0 0 16px;
+  padding-bottom: 9px;
+  border-bottom: 1px solid #e4e6ee;
+  color: var(--danger);
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 42px;
+  row-gap: 20px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  margin-bottom: 20px;
+}
+
+.form-grid .field {
+  margin-bottom: 0;
+}
+
+.field span {
+  color: #33364a;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+input,
+select,
+textarea {
+  width: 100%;
+  min-height: 46px;
+  border: 1px solid #ccd0dc;
+  border-radius: 10px;
+  background: #fff;
+  color: var(--text);
+  font: 16px "Sarabun", Arial, sans-serif;
+  padding: 0 20px;
+  outline: none;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: #b7bbc5;
+  font-weight: 700;
+}
+
+select {
+  color: #343746;
+}
+
+textarea {
+  min-height: 78px;
+  resize: vertical;
+  padding-top: 17px;
+}
+
+.wide {
+  margin-top: 22px;
+}
+
+.submit-btn {
+  width: 250px;
+  height: 54px;
+  display: block;
+  margin: 34px auto 0;
+  border: 0;
+  border-radius: 6px;
+  background: var(--brand);
+  color: #fff;
+  font: 600 24px "Sarabun", Arial, sans-serif;
+  cursor: pointer;
+}
+
+@media (max-width: 1000px) {
+  .page-content {
+    padding: 26px 18px 48px;
+  }
+
+  .form-card {
+    padding: 26px 24px;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  h1 {
+    font-size: 24px;
+  }
+
+  .submit-btn {
+    width: 100%;
+  }
+}
