@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Blood Inventory | BloodBank Staff</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <link rel="stylesheet" href="layout.css" />
+  <link rel="stylesheet" href="blood-inventory.css" />
+  <link rel="stylesheet" href="compact.css" />
+</head>
+<body data-active-menu="blood-stock">
+  <div id="layoutRoot">
+    <main class="page-content" id="pageContent">
+      <section class="page-head">
+        <h1>จัดการคลังถุงเลือด</h1>
+        <a class="add-bag-btn" href="add-blood-bag.html">
+          <i class="fa-solid fa-plus"></i>
+          เพิ่มถุงเลือดรับเข้าใหม่
+        </a>
+      </section>
+
+      <section class="inventory-panel">
+        <div class="toolbar">
+          <label class="search-box">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input id="searchInput" type="search" placeholder="ค้นหารหัสถุงเลือด (BagID)" />
+          </label>
+
+          <select id="bloodFilter" aria-label="กรองกรุ๊ปเลือด">
+            <option value="all">ทุกกรุ๊ปเลือด</option>
+            <option value="A">A</option>
+            <option value="B">B</option>
+            <option value="AB">AB</option>
+            <option value="O">O</option>
+          </select>
+
+          <select id="componentFilter" aria-label="กรองส่วนประกอบ">
+            <option value="all">ทุกส่วนประกอบ</option>
+            <option value="PRC">PRC</option>
+            <option value="Platelets">Platelets</option>
+            <option value="FFP">FFP</option>
+            <option value="Whole Blood">Whole Blood</option>
+          </select>
+
+          <select id="statusFilter" aria-label="กรองสถานะ">
+            <option value="all">ทุกสถานะ</option>
+            <option value="พร้อมใช้งาน">พร้อมใช้งาน</option>
+            <option value="ถูกจอง">ถูกจอง</option>
+            <option value="รอทำลาย">รอทำลาย</option>
+          </select>
+        </div>
+
+        <div class="table-card">
+          <table>
+            <thead>
+              <tr>
+                <th>BAG ID</th>
+                <th>ส่วนประกอบ</th>
+                <th>กรุ๊ปเลือด</th>
+                <th>วันที่รับเข้า</th>
+                <th>วันหมดอายุ</th>
+                <th>สถานะ</th>
+                <th>รายละเอียด</th>
+              </tr>
+            </thead>
+            <tbody id="bagTableBody"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="layout.js"></script>
+  <script src="blood-inventory.js"></script>
+</body>
+</html>
