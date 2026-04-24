@@ -122,9 +122,6 @@ tbody tr:last-child td {
   border-bottom: 0;
 }
 
-tbody tr.highlight td {
-  border-top: 3px solid #2391ff;
-}
 
 td:first-child {
   font-weight: 700;
