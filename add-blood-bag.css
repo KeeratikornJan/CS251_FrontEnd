@@ -1,0 +1,166 @@
+body {
+  background: #fff;
+}
+
+.page-content {
+  padding: 34px 36px 56px;
+}
+
+.title-row {
+  max-width: 1080px;
+  margin: 0 auto 34px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.back-link {
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+}
+
+h1 {
+  margin: 0;
+  font-size: 31px;
+}
+
+.form-card {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 28px 36px 28px;
+  background: #fff;
+  border: 1px solid #dfe2ea;
+  border-radius: 11px;
+  box-shadow: 0 4px 8px rgba(44, 48, 73, 0.13);
+}
+
+.form-section + .form-section {
+  margin-top: 30px;
+}
+
+h2 {
+  margin: 0 0 16px;
+  padding-bottom: 9px;
+  border-bottom: 1px solid #e4e6ee;
+  color: #eb2d2d;
+  font-size: 20px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.field span {
+  color: #33364a;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+input,
+select {
+  width: 100%;
+  min-height: 48px;
+  border: 1px solid #ccd0dc;
+  border-radius: 10px;
+  background: #fff;
+  color: var(--text);
+  font: 16px "Sarabun", Arial, sans-serif;
+  padding: 0 20px;
+  outline: none;
+}
+
+input::placeholder {
+  color: #8a8e9d;
+  font-weight: 600;
+}
+
+.red-placeholder::placeholder {
+  color: #ef3030;
+}
+
+.reference-row {
+  display: grid;
+  grid-template-columns: 1fr 260px;
+  gap: 16px;
+}
+
+.link-data-btn {
+  min-height: 48px;
+  border: 0;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(30, 36, 70, 0.08);
+  color: #4b4d5b;
+  font: 600 15px "Sarabun", Arial, sans-serif;
+  cursor: pointer;
+}
+
+.link-data-btn i {
+  margin-right: 10px;
+}
+
+.donor-preview {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  margin-top: 20px;
+  padding: 14px 18px;
+  border: 1px solid #ccd0dc;
+  border-radius: 10px;
+}
+
+.donor-preview span {
+  display: block;
+  color: #6a6f7c;
+  font-size: 13px;
+  margin-bottom: 8px;
+}
+
+.donor-preview strong {
+  font-size: 16px;
+}
+
+.danger-text {
+  color: #e22c34;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 82px;
+  row-gap: 18px;
+}
+
+.submit-btn {
+  width: 270px;
+  height: 58px;
+  display: block;
+  margin: 40px auto 0;
+  border: 0;
+  border-radius: 7px;
+  background: var(--brand);
+  color: #fff;
+  font: 600 25px "Sarabun", Arial, sans-serif;
+  cursor: pointer;
+}
+
+@media (max-width: 1000px) {
+  .page-content {
+    padding: 28px 18px 48px;
+  }
+
+  .form-card {
+    padding: 26px 24px;
+  }
+
+  .reference-row,
+  .donor-preview,
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+}
