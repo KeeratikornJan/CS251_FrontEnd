@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Patient Management | BloodBank Staff</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <link rel="stylesheet" href="layout.css" />
+  <link rel="stylesheet" href="patient-management.css" />
+  <link rel="stylesheet" href="compact.css" />
+</head>
+<body data-active-menu="patients">
+  <div id="layoutRoot">
+    <main class="page-content" id="pageContent">
+      <section class="page-head">
+        <h1>จัดการข้อมูลผู้ป่วย</h1>
+        <a class="add-patient-btn" href="add-patient.html">
+          <i class="fa-solid fa-user-plus"></i>
+          เพิ่มผู้ป่วยใหม่
+        </a>
+      </section>
+
+      <section class="patient-panel">
+        <div class="toolbar">
+          <label class="search-box">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input id="searchInput" type="search" placeholder="ค้นหาชื่อ, รหัสผู้ป่วย (PAT-XXXXX)" />
+          </label>
+
+          <select id="bloodFilter" aria-label="กรองกรุ๊ปเลือด">
+            <option value="all">ทุกกรุ๊ปเลือด</option>
+            <option value="A">A</option>
+            <option value="B">B</option>
+            <option value="AB">AB</option>
+            <option value="O">O</option>
+          </select>
+
+          <select id="statusFilter" aria-label="กรองสถานะการรับเลือด">
+            <option value="all">ทุกสถานะการรับเลือด</option>
+            <option value="ขอรับเลือดด่วน">ขอรับเลือดด่วน</option>
+            <option value="จองเลือดล่วงหน้า">จองเลือดล่วงหน้า</option>
+            <option value="ได้รับเลือดแล้ว">ได้รับเลือดแล้ว</option>
+          </select>
+        </div>
+
+        <div class="table-card">
+          <table>
+            <thead>
+              <tr>
+                <th>PATIENT ID</th>
+                <th>ชื่อ-นามสกุล</th>
+                <th>กรุ๊ปเลือด</th>
+                <th>สถานะการรับเลือด</th>
+                <th>การจัดการ</th>
+              </tr>
+            </thead>
+            <tbody id="patientTableBody"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="layout.js"></script>
+  <script src="patient-management.js"></script>
+</body>
+</html>
