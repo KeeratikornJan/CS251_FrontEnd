@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Add Patient | BloodBank Staff</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <link rel="stylesheet" href="layout.css" />
+  <link rel="stylesheet" href="add-patient.css" />
+  <link rel="stylesheet" href="compact.css" />
+</head>
+<body data-active-menu="patients">
+  <div id="layoutRoot">
+    <main class="page-content" id="pageContent">
+      <div class="title-row">
+        <a class="back-link" href="patient-management.html" aria-label="กลับไปหน้าจัดการผู้ป่วย">
+          <i class="fa-solid fa-arrow-left"></i>
+        </a>
+        <h1>เพิ่มผู้ป่วยใหม่</h1>
+      </div>
+
+      <form id="patientForm" class="form-card">
+        <section class="form-section">
+          <h2>ข้อมูลส่วนตัว</h2>
+
+          <div class="form-grid">
+            <label class="field">
+              <span>เลขบัตรประชาชน (13หลัก)</span>
+              <input name="citizenId" placeholder="x-xxxx-xxxxx-xx-xx" required />
+            </label>
+
+            <label class="field">
+              <span>ชื่อ - นามสกุล</span>
+              <input name="fullName" placeholder="ชื่อ นามสกุล" required />
+            </label>
+
+            <label class="field">
+              <span>เพศ</span>
+              <select name="gender" required>
+                <option value="">--เลือกเพศ--</option>
+                <option value="ชาย">ชาย</option>
+                <option value="หญิง">หญิง</option>
+                <option value="ไม่ระบุ">ไม่ระบุ</option>
+              </select>
+            </label>
+
+            <label class="field">
+              <span>วันเกิด</span>
+              <input name="birthDate" type="date" required />
+            </label>
+          </div>
+        </section>
+
+        <section class="form-section">
+          <h2>ข้อมูลการรักษา</h2>
+
+          <div class="form-grid">
+            <label class="field">
+              <span>เลขประจำตัวผู้ป่วย</span>
+              <input name="patientCode" placeholder="PAT-XXXXX" />
+            </label>
+
+            <label class="field">
+              <span>แพทย์ผู้รับผิดชอบ</span>
+              <input name="doctor" placeholder="นพ./พญ.XXXXXX" />
+            </label>
+          </div>
+        </section>
+
+        <section class="form-section">
+          <h2>ข้อมูลการร้องขอเลือด</h2>
+
+          <div class="form-grid">
+            <label class="field">
+              <span>กรุ๊ปเลือดที่ต้องการ</span>
+              <select name="bloodGroup" required>
+                <option value="">--เลือกกรุ๊ปเลือด--</option>
+                <option value="A">A</option>
+                <option value="B">B</option>
+                <option value="AB">AB</option>
+                <option value="O">O</option>
+              </select>
+            </label>
+
+            <label class="field">
+              <span>Rh Factor</span>
+              <select name="rhFactor" required>
+                <option value="">--เลือก Rh--</option>
+                <option value="+">Rh+</option>
+                <option value="-">Rh-</option>
+              </select>
+            </label>
+
+            <label class="field">
+              <span>จำนวนที่ต้องการ (ยูนิต)</span>
+              <input name="units" type="number" min="1" placeholder="" required />
+            </label>
+
+            <label class="field">
+              <span>ระดับความเร่งด่วน</span>
+              <select name="urgency" required>
+                <option value="">--เลือกระดับ--</option>
+                <option value="ขอรับเลือดด่วน">ขอรับเลือดด่วน</option>
+                <option value="จองเลือดล่วงหน้า">จองเลือดล่วงหน้า</option>
+              </select>
+            </label>
+          </div>
+        </section>
+
+        <button class="submit-btn" type="submit">บันทึกผู้ป่วย</button>
+      </form>
+    </main>
+  </div>
+
+  <script src="layout.js"></script>
+  <script src="add-patient.js"></script>
+</body>
+</html>
