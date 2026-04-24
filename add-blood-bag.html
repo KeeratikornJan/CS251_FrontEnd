@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Add Blood Bag | BloodBank Staff</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <link rel="stylesheet" href="shared-topbar-sidebar.css" />
+  <link rel="stylesheet" href="add-blood-bag.css" />
+  <link rel="stylesheet" href="shared-ui.css" />
+</head>
+<body data-active-menu="blood-stock">
+  <div id="layoutRoot">
+    <main class="page-content" id="pageContent">
+      <div class="title-row">
+        <a class="back-link" href="blood-inventory.html" aria-label="กลับไปหน้าคลังถุงเลือด">
+          <i class="fa-solid fa-arrow-left"></i>
+        </a>
+        <h1>เพิ่มถุงเลือดรับเข้าใหม่</h1>
+      </div>
+
+      <form id="bloodBagForm" class="form-card">
+        <section class="form-section">
+          <h2>แหล่งที่มาและอ้างอิง</h2>
+
+          <label class="field wide">
+            <span>อ้างอิงรหัสจากประวัติการบริจาค</span>
+            <div class="reference-row">
+              <input id="donationInput" name="donationId" placeholder="DONATION-XXXXX" />
+              <button class="link-data-btn" type="button" id="linkDonationBtn">
+                <i class="fa-solid fa-link"></i>
+                ดึงข้อมูล
+              </button>
+            </div>
+          </label>
+
+          <div class="donor-preview">
+            <div>
+              <span>ชื่อผู้บริจาค</span>
+              <strong id="donorName">คุณจักรภัทร แก้วพันธุ์พงษ์ (DON-12349)</strong>
+            </div>
+            <div>
+              <span>หมู่เลือดตั้งต้น</span>
+              <strong class="danger-text" id="donorBlood">B- (รอเลือดยืนยัน)</strong>
+            </div>
+          </div>
+        </section>
+
+        <section class="form-section">
+          <h2>รายละเอียดถุงเลือด</h2>
+
+          <div class="form-grid">
+            <label class="field">
+              <span>รหัสถุงเลือด (Bag ID)</span>
+              <input class="red-placeholder" name="bagId" placeholder="BAG-XXXXX" required />
+            </label>
+
+            <label class="field">
+              <span>ประเภทส่วนประกอบ</span>
+              <select name="component" required>
+                <option value="">--เลือกส่วนประกอบ แยก--</option>
+                <option value="PRC">Packed Red Cell (PRC)</option>
+                <option value="Platelets">Platelets</option>
+                <option value="FFP">Fresh Frozen Plasma (FFP)</option>
+                <option value="Whole Blood">Whole Blood</option>
+              </select>
+            </label>
+
+            <label class="field">
+              <span>วันที่ถ่ายเติม</span>
+              <input name="receivedDate" type="date" required />
+            </label>
+
+            <label class="field">
+              <span>วันหมดอายุ</span>
+              <input name="expiryDate" type="date" required />
+            </label>
+
+            <label class="field">
+              <span>ปริมาณบรรจุ</span>
+              <input name="volume" type="number" min="1" placeholder="450" required />
+            </label>
+          </div>
+        </section>
+
+        <button class="submit-btn" type="submit">บันทึกถุงเลือด</button>
+      </form>
+    </main>
+  </div>
+
+  <script src="shared-topbar-sidebar.js"></script>
+  <script src="add-blood-bag.js"></script>
+</body>
+</html>
