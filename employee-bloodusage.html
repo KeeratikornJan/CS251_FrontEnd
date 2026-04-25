@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบเบิกจ่ายเลือด | BloodBank</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&family=Prompt:wght@300;400;500;600&family=Sarabun:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="shared-topbar-sidebar.css">
+    <link rel="stylesheet" href="shared-ui.css">
+    <style>
+        body { overflow-y: scroll; }
+        .app-layout { grid-template-columns: 240px 1fr !important; }
+        .nav-link { white-space: nowrap; }
+        .page-title-header { font-size: 22px; font-weight: 600; color: var(--text); margin: 0 auto 24px auto; max-width: 500px; }
+        .usage-form-card { background: #fff; border-radius: 12px; padding: 30px; max-width: 500px; margin: 0 auto; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06); font-family: 'Prompt', sans-serif; }
+        .search-area { margin-bottom: 24px; }
+        .search-area label { display: block; font-weight: 500; color: #333; margin-bottom: 8px; font-size: 15px; }
+        .search-flex { display: flex; gap: 12px; }
+        .search-input { flex: 1; height: 38px; border: 1px solid #dcdfe7; border-radius: 6px; padding: 0 12px; font-family: 'Prompt', sans-serif; font-size: 14px; }
+        .search-input::placeholder { color: #a0aec0; }
+        .btn-search { background: var(--brand); color: #fff; border: none; border-radius: 6px; padding: 0 20px; font-weight: 500; font-family: 'Prompt', sans-serif; cursor: pointer; }
+        #usageDetails { display: none; }
+        .patient-box { background: #eaf1fa; border-radius: 8px; padding: 16px 20px; margin-bottom: 24px; }
+        .req-row { display: flex; justify-content: space-between; align-items: flex-start; padding: 8px 0; border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .req-row:first-child { padding-top: 0; }
+        .req-row:last-child { border-bottom: none; padding-bottom: 0; }
+        .req-label { color: var(--muted); font-size: 14px; }
+        .req-value { font-weight: 500; color: #333; font-size: 14px; text-align: right; }
+        .val-blue { color: #0b76e0; font-weight: 600; margin-bottom: 2px; }
+        .val-unit { font-size: 12px; font-weight: 600; color: #333; }
+        .match-section { margin-bottom: 30px; }
+        .match-title { font-weight: 500; color: #333; font-size: 15px; margin-bottom: 12px; }
+        .match-container { background: #f4f5f8; border-radius: 8px; padding: 16px; display: flex; flex-direction: column; gap: 10px; }
+        .bag-input { width: 100%; background: #fff; border: 1px solid #dcdfe7; border-radius: 6px; padding: 10px 16px; font-family: 'Outfit', sans-serif; color: var(--brand); font-size: 14px; outline: none; cursor: default; }
+        .submit-wrapper { text-align: center; }
+        .btn-submit { background: var(--brand); color: #fff; border: none; border-radius: 8px; padding: 10px 32px; font-size: 15px; font-weight: 500; font-family: 'Prompt', sans-serif; cursor: pointer; transition: opacity 0.2s; }
+        .btn-submit:hover { opacity: 0.9; }
+    </style>
+</head>
+<body data-active-menu="blood-transfer">
+    <div id="layoutRoot">
+        <div id="pageContent">
+            <h1 class="page-title-header">ระบบเบิกจ่ายเลือด</h1>
+            
+            <div class="usage-form-card">
+                <form id="searchPatientForm" class="search-area">
+                    <label>กรอกรหัสผู้ป่วย</label>
+                    <div class="search-flex">
+                        <input type="text" id="patientCodeInput" name="patient_code" class="search-input" placeholder="PAT-12345" required>
+                        <button type="submit" class="btn-search">Search</button>
+                    </div>
+                </form>
+
+                <form id="confirmUsageForm">
+                    <input type="hidden" id="hiddenPatientId" name="patient_id">
+                    
+                    <div id="usageDetails">
+                        <div class="patient-box">
+                            <div class="req-row">
+                                <div class="req-label">ชื่อผู้ป่วย :</div>
+                                <div class="req-value" id="displayPatientName">-</div>
+                            </div>
+                            <div class="req-row">
+                                <div class="req-label">ความต้องการเลือด :</div>
+                                <div class="req-value">
+                                    <div class="val-blue" id="displayReqType">-</div>
+                                    <div class="val-unit" id="displayReqUnit">-</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="match-section">
+                            <div class="match-title">ถุงเลือดที่ Match</div>
+                            <div class="match-container" id="matchedBagsContainer"></div>
+                        </div>
+
+                        <div class="submit-wrapper">
+                            <button type="submit" class="btn-submit">ยืนยันการจ่ายเลือด</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="shared-topbar-sidebar.js"></script>
+    <script>
+        // ฟังก์ชันค้นหาผู้ป่วยและถุงเลือดที่ Match (GET)
+        document.getElementById('searchPatientForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const patientCode = document.getElementById('patientCodeInput').value;
+            
+            try {
+                // ==========================================
+                // โค้ดสำหรับ Production (ปลดคอมเมนต์เมื่อเชื่อม Backend)
+                // ==========================================
+                /*
+                const response = await fetch(`http://localhost:3000/api/patients/${patientCode}/match-blood`);
+                if (!response.ok) throw new Error("ไม่พบข้อมูลผู้ป่วย หรือไม่มีเลือดที่ Match ในระบบ");
+                const data = await response.json();
+                */
+
+                // ==========================================
+                // ข้อมูลจำลองสำหรับทดสอบ (ลบออกเมื่อเชื่อม Backend)
+                // ==========================================
+                const data = { id: patientCode, name: "กิตติพงษ์ หวังดี", reqType: "O+ (PRC)", reqUnit: "2 Unit", matchedBags: ["BAG-A23001", "BAG-A21001"] };
+
+                // นำข้อมูลลงหน้าจอ
+                document.getElementById('hiddenPatientId').value = data.id;
+                document.getElementById('displayPatientName').innerText = data.name;
+                document.getElementById('displayReqType').innerText = data.reqType;
+                document.getElementById('displayReqUnit').innerText = data.reqUnit;
+
+                // สร้าง Input ถุงเลือดแบบ Readonly เพื่อเตรียมส่งไป Backend
+                const container = document.getElementById('matchedBagsContainer');
+                container.innerHTML = ''; 
+                data.matchedBags.forEach(bagId => {
+                    const input = document.createElement('input');
+                    input.type = 'text';
+                    input.name = 'matched_bags[]';
+                    input.className = 'bag-input';
+                    input.value = bagId;
+                    input.readOnly = true;
+                    container.appendChild(input);
+                });
+
+                document.getElementById('usageDetails').style.display = 'block';
+            } catch (error) {
+                console.error(error);
+                alert(error.message || "เกิดข้อผิดพลาดในการดึงข้อมูล");
+                document.getElementById('usageDetails').style.display = 'none';
+            }
+        });
+
+        // ฟังก์ชันยืนยันการจ่ายเลือด (POST)
+        document.getElementById('confirmUsageForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            
+            const payload = {
+                patient_id: formData.get('patient_id'),
+                matched_bags: formData.getAll('matched_bags[]')
+            };
+
+            try {
+                // ==========================================
+                // โค้ดสำหรับ Production (ปลดคอมเมนต์เมื่อเชื่อม Backend)
+                // ==========================================
+                /*
+                const response = await fetch('http://localhost:3000/api/blood-usage/confirm', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                if (!response.ok) throw new Error("บันทึกข้อมูลล้มเหลว");
+                // const result = await response.json();
+                */
+
+                // จำลองการทำงานสำเร็จ
+                console.log("Payload to send:", payload);
+                alert("ยืนยันการจ่ายเลือดสำเร็จ ระบบได้ดำเนินการบันทึกแล้ว");
+                
+                // รีเซ็ตหน้าจอ
+                document.getElementById('usageDetails').style.display = 'none';
+                document.getElementById('searchPatientForm').reset();
+            } catch (error) {
+                console.error(error);
+                alert(error.message || "เกิดข้อผิดพลาดในการบันทึก");
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>บันทึกผลทางห้องปฏิบัติการ | BloodBank</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&family=Prompt:wght@300;400;500;600&family=Sarabun:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="shared-topbar-sidebar.css">
+    <link rel="stylesheet" href="shared-ui.css">
+    <style>
+        body { overflow-y: scroll; }
+        .app-layout { grid-template-columns: 240px 1fr !important; }
+        .nav-link { white-space: nowrap; }
+        .page-title-header { font-size: 22px; font-weight: 600; color: var(--text); margin: 0 auto 24px auto; max-width: 900px; }
+        .test-form-card { background: #fff; border-radius: 12px; padding: 40px; max-width: 900px; margin: 0 auto; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03); font-family: 'Prompt', sans-serif; }
+        .search-area { margin-bottom: 30px; }
+        .search-area label { display: block; font-weight: 500; color: #333; margin-bottom: 8px; font-size: 15px; }
+        .search-flex { display: flex; gap: 12px; max-width: 500px; }
+        .search-input { flex: 1; height: 42px; border: 1px solid #dcdfe7; border-radius: 6px; padding: 0 16px; font-family: 'Prompt', sans-serif; font-size: 15px; }
+        .search-input::placeholder { color: #a0aec0; }
+        .btn-search { background: var(--brand); color: #fff; border: none; border-radius: 6px; padding: 0 24px; font-weight: 500; font-family: 'Prompt', sans-serif; cursor: pointer; }
+        .info-panel { background: #f4f5f8; border-radius: 10px; padding: 20px 30px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; opacity: 0.5; pointer-events: none; transition: 0.3s; }
+        .info-panel.active { opacity: 1; pointer-events: auto; }
+        .info-name { font-weight: 600; color: var(--brand); font-size: 16px; }
+        .info-group { text-align: center; }
+        .info-label { font-size: 12px; color: var(--muted); margin-bottom: 4px; }
+        .info-val { font-weight: 600; font-size: 15px; color: #333; }
+        .val-red { color: var(--danger); }
+        .section-header { font-size: 16px; font-weight: 500; color: var(--brand); margin-bottom: 16px; }
+        .form-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 30px; }
+        .form-group label { display: block; font-size: 14px; color: var(--muted); margin-bottom: 8px; }
+        .custom-select { width: 100%; height: 42px; border: 1px solid #dcdfe7; border-radius: 6px; padding: 0 16px; font-family: 'Prompt', sans-serif; font-size: 14px; color: #333; appearance: none; background: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23333' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e") no-repeat right 16px center/14px; }
+        .select-green-border { border-left: 5px solid var(--ok); }
+        .submit-wrapper { text-align: center; margin-top: 40px; }
+        .btn-submit { background: var(--brand); color: #fff; border: none; border-radius: 8px; padding: 12px 48px; font-size: 16px; font-weight: 500; font-family: 'Prompt', sans-serif; cursor: pointer; transition: opacity 0.2s; }
+        .btn-submit:hover { opacity: 0.9; }
+        .btn-submit:disabled { background: #cbd5e1; cursor: not-allowed; }
+    </style>
+</head>
+<body data-active-menu="blood-test">
+    <div id="layoutRoot">
+        <div id="pageContent">
+            <h1 class="page-title-header">บันทึกผลทางห้องปฏิบัติการ</h1>
+            
+            <div class="test-form-card">
+                <form id="searchDonorForm" class="search-area">
+                    <label>กรอกรหัสผู้บริจาค</label>
+                    <div class="search-flex">
+                        <input type="text" id="donorCodeInput" name="donor_code" class="search-input" placeholder="DON-13579" required>
+                        <button type="submit" class="btn-search">ค้นหาข้อมูล</button>
+                    </div>
+                </form>
+
+                <form id="saveTestForm">
+                    <input type="hidden" id="hiddenDonorId" name="donor_id">
+                    
+                    <div id="infoPanel" class="info-panel">
+                        <div class="info-name" id="displayDonorName">-</div>
+                        <div class="info-group">
+                            <div class="info-label">วันที่เจาะเก็บเลือด</div>
+                            <div class="info-val" id="displayCollectDate">-</div>
+                        </div>
+                        <div class="info-group">
+                            <div class="info-label">ประเภทกระบวนการ</div>
+                            <div class="info-val" id="displayProcessType">-</div>
+                        </div>
+                        <div class="info-group">
+                            <div class="info-label">หมู่เลือด</div>
+                            <div class="info-val val-red" id="displayBloodGroup">-</div>
+                        </div>
+                    </div>
+
+                    <div class="section-header">Comfarmatory Test</div>
+                    <div class="form-grid-2">
+                        <div class="form-group">
+                            <label>ABO Blood Group</label>
+                            <select name="abo_group" class="custom-select">
+                                <option value="A">A</option><option value="B">B</option><option value="O">O</option><option value="AB">AB</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Rh Factor</label>
+                            <select name="rh_factor" class="custom-select">
+                                <option value="positive">Positive (+)</option><option value="negative">Negative (-)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="section-header">Infectious Diseases Results</div>
+                    <div class="form-grid-2">
+                        <div class="form-group">
+                            <label>ไวรัสเอชไอวี (HIV)</label>
+                            <select name="hiv_result" class="custom-select select-green-border">
+                                <option value="non-reactive">Non-Reactive(-) ปกติ</option><option value="reactive">Reactive(+) ผิดปกติ</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>ไวรัสตับอักเสบขี (HBaAG)</label>
+                            <select name="hbaag_result" class="custom-select select-green-border">
+                                <option value="non-reactive">Non-Reactive(-) ปกติ</option><option value="reactive">Reactive(+) ผิดปกติ</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>ไวรัสตับอักเสบซี (HCV)</label>
+                            <select name="hcv_result" class="custom-select select-green-border">
+                                <option value="non-reactive">Non-Reactive(-) ปกติ</option><option value="reactive">Reactive(+) ผิดปกติ</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>ซิฟิลิส Syphilis (VDRL)</label>
+                            <select name="vdrl_result" class="custom-select select-green-border">
+                                <option value="non-reactive">Non-Reactive(-) ปกติ</option><option value="reactive">Reactive(+) ผิดปกติ</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="submit-wrapper">
+                        <button type="submit" id="submitBtn" class="btn-submit" disabled>บันทึกผล</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="shared-topbar-sidebar.js"></script>
+    <script>
+        // ฟังก์ชันค้นหาผู้บริจาค (GET)
+        document.getElementById('searchDonorForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const donorCode = document.getElementById('donorCodeInput').value;
+            
+            try {
+                // ==========================================
+                // โค้ดสำหรับ Production (ปลดคอมเมนต์เมื่อเชื่อม Backend)
+                // ==========================================
+                /*
+                const response = await fetch(`http://localhost:3000/api/donors/${donorCode}`);
+                if (!response.ok) throw new Error("ไม่พบข้อมูลผู้บริจาค");
+                const data = await response.json();
+                */
+
+                // ==========================================
+                // ข้อมูลจำลองสำหรับทดสอบ (ลบออกเมื่อเชื่อม Backend)
+                // ==========================================
+                const data = { id: donorCode, name: "คุณสมชาย รักดี", collectDate: "26 มี.ค. 2026", processType: "Whole Blood (WB)", bloodGroup: "A (Positive)" };
+
+                // นำข้อมูลลงหน้าจอ
+                document.getElementById('hiddenDonorId').value = data.id;
+                document.getElementById('displayDonorName').innerText = data.name;
+                document.getElementById('displayCollectDate').innerText = data.collectDate;
+                document.getElementById('displayProcessType').innerText = data.processType;
+                document.getElementById('displayBloodGroup').innerText = data.bloodGroup;
+                
+                document.getElementById('infoPanel').classList.add('active');
+                document.getElementById('submitBtn').disabled = false;
+            } catch (error) {
+                console.error(error);
+                alert(error.message || "เกิดข้อผิดพลาดในการดึงข้อมูล");
+            }
+        });
+
+        // ฟังก์ชันบันทึกผล (POST)
+        document.getElementById('saveTestForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const payload = Object.fromEntries(new FormData(this).entries());
+
+            try {
+                // ==========================================
+                // โค้ดสำหรับ Production (ปลดคอมเมนต์เมื่อเชื่อม Backend)
+                // ==========================================
+                /*
+                const response = await fetch('http://localhost:3000/api/save-blood-test', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                if (!response.ok) throw new Error("บันทึกข้อมูลล้มเหลว");
+                // const result = await response.json();
+                */
+
+                // จำลองการทำงานสำเร็จ
+                console.log("Payload to send:", payload);
+                alert("บันทึกข้อมูลสำเร็จ");
+                
+            } catch (error) {
+                console.error(error);
+                alert(error.message || "เกิดข้อผิดพลาดในการบันทึก");
+            }
+        });
+    </script>
+</body>
+</html>

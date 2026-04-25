@@ -7,8 +7,8 @@ const menuItems = [
   { key: "donors", label: "ผู้บริจาค", href: "donor-management.html", icon: "fa-users" },
   { key: "patients", label: "ผู้ป่วย", href: "patient-management.html", icon: "fa-bed" },
   { key: "blood-stock", label: "คลังเลือด", href: "blood-inventory.html", icon: "fa-prescription-bottle-medical" },
-  { key: "blood-test", label: "บันทึกการตรวจเลือด", href: "#", icon: "fa-vial" },
-  { key: "blood-transfer", label: "การจ่ายเลือด", href: "#", icon: "fa-briefcase-medical" },
+  { key: "blood-test", label: "บันทึกการตรวจเลือด", href: "employee-bloodtest.html", icon: "fa-vial" },
+  { key: "blood-transfer", label: "การจ่ายเลือด", href: "employee-bloodusage.html", icon: "fa-briefcase-medical" },
   { key: "notification", label: "แจ้งเตือน", href: "#", icon: "fa-bell", regular: true },
   { key: "report", label: "รายงาน", href: "#", icon: "fa-chart-bar", regular: true }
 ];
