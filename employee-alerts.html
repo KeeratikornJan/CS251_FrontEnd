@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>แจ้งเตือน | BloodBank Staff</title>
+  
+  <link rel="stylesheet" href="shared-topbar-sidebar.css" />
+  <link rel="stylesheet" href="shared-ui.css" />
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+
+  <style>
+    
+    .alert-container {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-top: 20px;
+    }
+
+    .alert-item {
+      display: flex;
+      background: #fff;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      border: 1px solid #eee;
+    }
+
+    .alert-indicator { width: 8px; flex-shrink: 0; }
+    .alert-content { padding: 20px; flex-grow: 1; }
+    .alert-header { display: flex; justify-content: space-between; margin-bottom: 8px; }
+    .alert-title { font-size: 18px; font-weight: 700; display: flex; align-items: center; gap: 10px; }
+    .alert-body { font-size: 15px; color: #555; margin-bottom: 12px; }
+
+    /*Badge และปุ่ม */
+    .badge { padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+    .btn-alert { padding: 6px 16px; border-radius: 6px; border: none; font-weight: 600; cursor: pointer; color: white; }
+
+    /* สีตามประเภท */
+    .alert-red .alert-indicator { background: #eb2d2d; }
+    .alert-red .alert-content { background: #fff5f5; }
+    .alert-red .alert-title { color: #eb2d2d; }
+    .alert-red .btn-alert { background: #eb2d2d; }
+
+    .alert-orange .alert-indicator { background: #f44336; }
+    .alert-orange .alert-content { background: #fff8f7; }
+    .alert-orange .alert-title { color: #d32f2f; }
+    .alert-orange .btn-alert { background: #d32f2f; }
+
+    .alert-yellow .alert-indicator { background: #fbc02d; }
+    .alert-yellow .alert-content { background: #fffef2; }
+    .alert-yellow .alert-title { color: #b45309; }
+    .alert-yellow .btn-alert { background: #fbc02d; color: #000; }
+
+    .alert-blue .alert-indicator { background: #2196f3; }
+    .alert-blue .alert-content { background: #f0f7ff; }
+    .alert-blue .alert-title { color: #1976d2; }
+    .alert-blue .btn-alert { background: #1976d2; }
+  </style>
+</head>
+
+<body data-active-menu="alerts">
+  <div id="layoutRoot">
+    <main class="page-content" id="pageContent">
+      <div class="title-row">
+        <h1>แจ้งเตือนส่วนกลาง</h1>
+      </div>
+
+      <div class="alert-container">
+        <div class="alert-item alert-red">
+          <div class="alert-indicator"></div>
+          <div class="alert-content">
+            <div class="alert-header">
+              <div class="alert-title"><i class="fa-solid fa-triangle-exclamation"></i> ขั้นวิกฤต : เลือด PRC กรุ๊ป O(-) ขาดสต็อกด่วน</div>
+              <span class="badge" style="background: #ffebeb; color: #eb2d2d;">เมื่อ1นาทีที่แล้ว</span>
+            </div>
+            <div class="alert-body">ยอดคงเหลือปัจจุบัน <strong style="color: #eb2d2d;">(0 ยูนิต)</strong> ต่ำกว่าเกณฑ์มาตรฐาน (5 ยูนิต)</div>
+            <button class="btn-alert">ดูรายละเอียด</button>
+          </div>
+        </div>
+
+        <div class="alert-item alert-orange">
+          <div class="alert-indicator"></div>
+          <div class="alert-content">
+            <div class="alert-header">
+              <div class="alert-title"><i class="fa-solid fa-ban"></i> ระบบระงับสิทธิ์อัตโนมัติ</div>
+              <span class="badge" style="background: #fff0f0; color: #d32f2f;">1 เม.ย. 2568</span>
+            </div>
+            <div class="alert-body">พบปัญหาจากผู้บริจาค <strong>คุณสมโชค ดีเสนอ (DON-1422)</strong> ผลตรวจ Anti-HCV เป็น <strong style="color: #eb2d2d;">Reactive (+)</strong></div>
+            <button class="btn-alert">ดูรายละเอียด</button>
+          </div>
+        </div>
+
+        <div class="alert-item alert-yellow">
+          <div class="alert-indicator"></div>
+          <div class="alert-content">
+            <div class="alert-header">
+              <div class="alert-title"><i class="fa-solid fa-clock"></i> แจ้งเตือน : ถุงเลือดจะหมดอายุภายใน 3 วัน</div>
+              <span class="badge" style="background: #fefce8; color: #b45309;">เช้านี้</span>
+            </div>
+            <div class="alert-body">เหลือเลือด Platelet (PLT) รหัส <strong>BAG-B23049</strong> จะหมดอายุในวันที่ 10 เม.ย. 2025</div>
+            <button class="btn-alert">ดูรายละเอียด</button>
+          </div>
+        </div>
+
+        <div class="alert-item alert-blue">
+          <div class="alert-indicator"></div>
+          <div class="alert-content">
+            <div class="alert-header">
+              <div class="alert-title"><i class="fa-solid fa-truck-medical"></i> หน่วยงานรับบริจาคเคลื่อนที่</div>
+              <span class="badge" style="background: #e3f2fd; color: #1976d2;">เช้านี้</span>
+            </div>
+            <div class="alert-body">หน่วยกาชาดเคลื่อนที่รับมา 14 ยูนิต สำเร็จแล้ว สถานะถูกส่งเข้า Inventory เรียบร้อย</div>
+            <button class="btn-alert">ดูรายละเอียด</button>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="shared-topbar-sidebar.js"></script>
+</body>
+</html>
