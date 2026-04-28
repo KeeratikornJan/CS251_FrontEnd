@@ -1,58 +1,44 @@
-const STORAGE_KEY = "bloodbank_patients";
+const patientForm = document.querySelector('#patientForm');
+const submitBtn = patientForm.querySelector('.submit-btn');
 
-const patientForm = document.querySelector("#patientForm");
-
-function getPatients() {
-  const patients = localStorage.getItem(STORAGE_KEY);
-
-  if (!patients) return [];
-
-  try {
-    return JSON.parse(patients);
-  } catch (error) {
-    return [];
-  }
+function mapGender(thaiGender) {
+  if (thaiGender === 'ชาย') return 'M';
+  if (thaiGender === 'หญิง') return 'F';
+  return 'M';
 }
 
-function savePatients(patients) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(patients));
+function setLoading(loading) {
+  submitBtn.disabled = loading;
+  submitBtn.textContent = loading ? 'กำลังบันทึก...' : 'บันทึกผู้ป่วย';
 }
 
-function generatePatientId(patients) {
-  const patientNumbers = patients
-    .map((patient) => Number(String(patient.id).replace("PAT-", "")))
-    .filter((number) => Number.isFinite(number));
-
-  const nextNumber = patientNumbers.length > 0 ? Math.max(...patientNumbers) + 1 : 88123;
-  return `PAT-${String(nextNumber).padStart(5, "0")}`;
-}
-
-patientForm.addEventListener("submit", (event) => {
+patientForm.addEventListener('submit', async (event) => {
   event.preventDefault();
+  const fd = new FormData(patientForm);
 
-  const formData = new FormData(patientForm);
-  const patients = getPatients();
-  const patientCode = formData.get("patientCode").trim();
-  const bloodGroup = formData.get("bloodGroup");
-  const rhFactor = formData.get("rhFactor");
+  const nationalId = fd.get('citizenId').replace(/[-\s]/g, '');
+  if (nationalId.length !== 13) {
+    alert('กรุณากรอกเลขบัตรประชาชน 13 หลัก');
+    return;
+  }
 
-  const newPatient = {
-    id: patientCode || generatePatientId(patients),
-    name: formData.get("fullName"),
-    group: `${bloodGroup}${rhFactor}`,
-    status: formData.get("urgency"),
-    units: Number(formData.get("units")),
-    profile: {
-      citizenId: formData.get("citizenId"),
-      gender: formData.get("gender"),
-      birthDate: formData.get("birthDate"),
-      doctor: formData.get("doctor")
-    }
+  const body = {
+    nationalId,
+    name: fd.get('fullName'),
+    gender: mapGender(fd.get('gender')),
+    bloodGroup: fd.get('bloodGroup'),
+    rhFactor: fd.get('rhFactor'),
+    birthday: fd.get('birthDate'),
+    transfusionStatus: fd.get('urgency') || null
   };
 
-  patients.unshift(newPatient);
-  savePatients(patients);
-
-  alert("บันทึกข้อมูลผู้ป่วยเรียบร้อยแล้ว");
-  window.location.href = "patient-management.html";
+  setLoading(true);
+  try {
+    const patientId = await apiPost('/api/patients', body);
+    alert(`บันทึกผู้ป่วยเรียบร้อยแล้ว (Patient ID: ${patientId})`);
+    window.location.href = 'patient-management.html';
+  } catch (err) {
+    alert(`เกิดข้อผิดพลาด: ${err.message}`);
+    setLoading(false);
+  }
 });

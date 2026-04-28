@@ -1,38 +1,24 @@
-const STORAGE_KEY = "bloodbank_bags";
+const searchInput = document.querySelector('#searchInput');
+const bloodFilter = document.querySelector('#bloodFilter');
+const componentFilter = document.querySelector('#componentFilter');
+const statusFilter = document.querySelector('#statusFilter');
+const bagTableBody = document.querySelector('#bagTableBody');
 
-const defaultBags = [
-  { id: "BAG-A23001", component: "PRC", group: "O+", receivedDate: "15 ม.ค. 2569", expiryDate: "19 ก.พ. 2569", volume: 450, status: "พร้อมใช้งาน", donationId: "DON-12347" },
-  { id: "BAG-B23049", component: "Platelets", group: "A+", receivedDate: "1 เม.ย. 2569", expiryDate: "6 เม.ย. 2569", volume: 450, status: "ถูกจอง", donationId: "DON-12346" },
-  { id: "BAG-C99822", component: "FFP", group: "B+", receivedDate: "20 ธ.ค. 2568", expiryDate: "20 ธ.ค. 2569", volume: 450, status: "พร้อมใช้งาน", donationId: "DON-12345" },
-  { id: "BAG-D5555", component: "Whole Blood", group: "AB-", receivedDate: "21 ก.พ. 2569", expiryDate: "28 มี.ค. 2569", volume: 450, status: "รอทำลาย", donationId: "DON-12349" }
-];
+let allBags = [];
 
-const searchInput = document.querySelector("#searchInput");
-const bloodFilter = document.querySelector("#bloodFilter");
-const componentFilter = document.querySelector("#componentFilter");
-const statusFilter = document.querySelector("#statusFilter");
-const bagTableBody = document.querySelector("#bagTableBody");
-
-function getBags() {
-  const bags = localStorage.getItem(STORAGE_KEY);
-
-  if (!bags) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(defaultBags));
-    return defaultBags;
-  }
-
-  try {
-    return JSON.parse(bags);
-  } catch (error) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(defaultBags));
-    return defaultBags;
-  }
+function formatBagId(id) {
+  return `BAG-${String(id).padStart(5, '0')}`;
 }
 
-function getStatusClass(status) {
-  if (status === "ถูกจอง") return "reserved";
-  if (status === "รอทำลาย") return "discard";
-  return "ready";
+function mapBagStatus(status) {
+  const map = { 0: 'พร้อมใช้งาน', 1: 'ถูกจอง', 2: 'ใช้แล้ว', 3: 'รอทำลาย' };
+  return map[status] ?? 'ไม่ทราบสถานะ';
+}
+
+function getBagStatusClass(status) {
+  if (status === 1) return 'reserved';
+  if (status === 3 || status === 2) return 'discard';
+  return 'ready';
 }
 
 function renderBags() {
@@ -41,43 +27,64 @@ function renderBags() {
   const selectedComponent = componentFilter.value;
   const selectedStatus = statusFilter.value;
 
-  const filteredBags = getBags().filter((bag) => {
-    const bagGroup = bag.group.replace(/[+-]/g, "");
-    const matchesSearch = bag.id.toLowerCase().includes(keyword);
-    const matchesBlood = selectedBlood === "all" || bagGroup === selectedBlood;
-    const matchesComponent = selectedComponent === "all" || bag.component === selectedComponent;
-    const matchesStatus = selectedStatus === "all" || bag.status === selectedStatus;
-
+  const filtered = allBags.filter(bag => {
+    const idStr = formatBagId(bag.bagId).toLowerCase();
+    const matchesSearch = !keyword || idStr.includes(keyword);
+    const matchesBlood = selectedBlood === 'all' || bag.bloodGroup === selectedBlood;
+    const matchesComponent = selectedComponent === 'all' || bag.componentType === selectedComponent;
+    const statusLabel = mapBagStatus(bag.bagStatus);
+    const matchesStatus = selectedStatus === 'all' || statusLabel === selectedStatus;
     return matchesSearch && matchesBlood && matchesComponent && matchesStatus;
   });
 
-  if (filteredBags.length === 0) {
+  if (filtered.length === 0) {
     bagTableBody.innerHTML = '<tr><td class="empty-state" colspan="7">ไม่พบข้อมูลถุงเลือด</td></tr>';
     return;
   }
 
-  bagTableBody.innerHTML = filteredBags
-    .map((bag) => `
+  bagTableBody.innerHTML = filtered.map(bag => {
+    const displayId = formatBagId(bag.bagId);
+    const statusLabel = mapBagStatus(bag.bagStatus);
+    const statusClass = getBagStatusClass(bag.bagStatus);
+    return `
       <tr>
-        <td><a class="bag-link" href="blood-bag-detail.html?id=${encodeURIComponent(bag.id)}">${bag.id.replace("-", "-<br>")}</a></td>
-        <td>${bag.component}</td>
-        <td>${bag.group}</td>
-        <td>${bag.receivedDate}</td>
-        <td>${bag.expiryDate}</td>
-        <td><span class="status ${getStatusClass(bag.status)}">${bag.status}</span></td>
         <td>
-          <a class="detail-btn" href="blood-bag-detail.html?id=${encodeURIComponent(bag.id)}" title="ดูรายละเอียด">
+          <a class="bag-link" href="blood-bag-detail.html?id=${bag.bagId}">
+            ${displayId.replace('-', '-<br>')}
+          </a>
+        </td>
+        <td>${bag.componentType || '-'}</td>
+        <td>${bag.bloodGroup}${bag.rhFactor}</td>
+        <td>${formatThaiDate(bag.collectionDate)}</td>
+        <td>${formatThaiDate(bag.expiryDate)}</td>
+        <td><span class="status ${statusClass}">${statusLabel}</span></td>
+        <td>
+          <a class="detail-btn" href="blood-bag-detail.html?id=${bag.bagId}" title="ดูรายละเอียด">
             <i class="fa-solid fa-angles-right"></i>
           </a>
         </td>
       </tr>
-    `)
-    .join("");
+    `;
+  }).join('');
 }
 
-[searchInput, bloodFilter, componentFilter, statusFilter].forEach((element) => {
-  element.addEventListener("input", renderBags);
-  element.addEventListener("change", renderBags);
+function setTableState(html) {
+  bagTableBody.innerHTML = html;
+}
+
+async function loadBags() {
+  setTableState('<tr><td class="empty-state" colspan="7"><i class="fa-solid fa-spinner fa-spin"></i> กำลังโหลดข้อมูล...</td></tr>');
+  try {
+    allBags = await apiGet('/api/blood/bags');
+    renderBags();
+  } catch (err) {
+    setTableState(`<tr><td class="empty-state" colspan="7">เกิดข้อผิดพลาด: ${err.message}</td></tr>`);
+  }
+}
+
+[searchInput, bloodFilter, componentFilter, statusFilter].forEach(el => {
+  el.addEventListener('input', renderBags);
+  el.addEventListener('change', renderBags);
 });
 
-renderBags();
+loadBags();

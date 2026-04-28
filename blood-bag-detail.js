@@ -1,92 +1,130 @@
-const STORAGE_KEY = "bloodbank_bags";
+const bagIdEl = document.querySelector('#bagId');
+const donationIdEl = document.querySelector('#donationId');
+const bagStatusEl = document.querySelector('#bagStatus');
+const componentEl = document.querySelector('#component');
+const bloodGroupEl = document.querySelector('#bloodGroup');
+const receivedDateEl = document.querySelector('#receivedDate');
+const expiryDateEl = document.querySelector('#expiryDate');
+const discardBtn = document.querySelector('#discardBtn');
 
-const defaultBag = {
-  id: "BAG-A23001",
-  component: "PRC",
-  group: "O+",
-  receivedDate: "15 ม.ค. 2569",
-  expiryDate: "19 ก.พ. 2569",
-  volume: 450,
-  status: "พร้อมใช้งาน",
-  donationId: "DON-12347"
-};
+let currentBag = null;
 
-const bagIdEl = document.querySelector("#bagId");
-const donationIdEl = document.querySelector("#donationId");
-const bagStatusEl = document.querySelector("#bagStatus");
-const componentEl = document.querySelector("#component");
-const bloodGroupEl = document.querySelector("#bloodGroup");
-const receivedDateEl = document.querySelector("#receivedDate");
-const expiryDateEl = document.querySelector("#expiryDate");
-const discardBtn = document.querySelector("#discardBtn");
+function getUrlBagId() {
+  return parseInt(new URLSearchParams(window.location.search).get('id'));
+}
 
-function getBags() {
-  const bags = localStorage.getItem(STORAGE_KEY);
+function getComponentLabel(type) {
+  const labels = {
+    PRC: 'Packed Red Cell (PRC)',
+    Platelets: 'Platelets',
+    FFP: 'Fresh Frozen Plasma (FFP)',
+    'Whole Blood': 'Whole Blood'
+  };
+  return labels[type] || type || '-';
+}
 
-  if (!bags) return [defaultBag];
+function getRhLabel(rh) {
+  return rh === '+' ? 'Positive (+)' : 'Negative (-)';
+}
 
-  try {
-    return JSON.parse(bags);
-  } catch (error) {
-    return [defaultBag];
+function mapBagStatus(status) {
+  const map = { 0: 'พร้อมใช้งาน', 1: 'ถูกจอง', 2: 'ใช้แล้ว', 3: 'รอทำลาย' };
+  return map[status] ?? 'ไม่ทราบสถานะ';
+}
+
+function getBagStatusClass(status) {
+  if (status === 1) return 'reserved';
+  if (status === 3 || status === 2) return 'discard';
+  return 'ready';
+}
+
+function formatBagId(id) {
+  return `BAG-${String(id).padStart(5, '0')}`;
+}
+
+function renderBag(bag) {
+  currentBag = bag;
+  bagIdEl.textContent = formatBagId(bag.bagId);
+  donationIdEl.textContent = `BAG-${bag.bagId}`;
+  bagStatusEl.textContent = mapBagStatus(bag.bagStatus);
+  bagStatusEl.className = `status ${getBagStatusClass(bag.bagStatus)}`;
+  componentEl.textContent = getComponentLabel(bag.componentType);
+  bloodGroupEl.textContent = `${bag.bloodGroup} / ${getRhLabel(bag.rhFactor)}`;
+  receivedDateEl.textContent = formatThaiDate(bag.collectionDate);
+  expiryDateEl.textContent = formatThaiDate(bag.expiryDate);
+
+  // Highlight expiry date if bag is available and near expiry
+  const expiryEl = expiryDateEl.closest('.info-box');
+  if (expiryEl && bag.bagStatus === 0 && bag.expiryDate) {
+    const daysLeft = Math.ceil(
+      (new Date(bag.expiryDate) - new Date()) / (1000 * 60 * 60 * 24)
+    );
+    if (daysLeft <= 7) expiryEl.classList.add('warning');
   }
 }
 
-function saveBags(bags) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(bags));
+function showError(msg) {
+  bagIdEl.textContent = 'ไม่พบข้อมูล';
+  donationIdEl.textContent = '-';
+  bagStatusEl.textContent = '-';
+  componentEl.textContent = msg;
+  bloodGroupEl.textContent = '-';
+  receivedDateEl.textContent = '-';
+  expiryDateEl.textContent = '-';
 }
 
-function getCurrentBag() {
-  const params = new URLSearchParams(window.location.search);
-  const id = params.get("id");
-  return getBags().find((bag) => bag.id === id) || defaultBag;
+async function loadBag() {
+  const bagId = getUrlBagId();
+  if (!bagId || isNaN(bagId)) {
+    showError('รหัสถุงเลือดไม่ถูกต้อง');
+    return;
+  }
+  try {
+    const bags = await apiGet('/api/blood/bags');
+    const bag = bags.find(b => b.bagId === bagId);
+    if (!bag) {
+      showError(`ไม่พบถุงเลือดรหัส ${bagId}`);
+      return;
+    }
+    renderBag(bag);
+  } catch (err) {
+    showError(`เกิดข้อผิดพลาด: ${err.message}`);
+  }
 }
 
-function getComponentLabel(component) {
-  const labels = {
-    PRC: "Packed Red Cell (PRC)",
-    Platelets: "Platelets",
-    FFP: "Fresh Frozen Plasma (FFP)",
-    "Whole Blood": "Whole Blood"
-  };
-
-  return labels[component] || component;
-}
-
-function getBloodLabel(group) {
-  const blood = group.replace(/[+-]/g, "");
-  const rh = group.includes("+") ? "Positive (+)" : "Negative (-)";
-  return `${blood} / ${rh}`;
-}
-
-function getStatusClass(status) {
-  if (status === "ถูกจอง") return "reserved";
-  if (status === "รอทำลาย") return "discard";
-  return "ready";
-}
-
-function renderBag() {
-  const bag = getCurrentBag();
-
-  bagIdEl.textContent = bag.id;
-  donationIdEl.textContent = bag.donationId || "DON-12347";
-  bagStatusEl.textContent = bag.status;
-  bagStatusEl.className = `status ${getStatusClass(bag.status)}`;
-  componentEl.textContent = getComponentLabel(bag.component);
-  bloodGroupEl.textContent = getBloodLabel(bag.group);
-  receivedDateEl.textContent = bag.receivedDate;
-  expiryDateEl.textContent = bag.expiryDate;
-}
-
-discardBtn.addEventListener("click", () => {
-  const bag = getCurrentBag();
-  const bags = getBags().map((item) => (
-    item.id === bag.id ? { ...item, status: "รอทำลาย" } : item
-  ));
-
-  saveBags(bags);
-  renderBag();
-  alert("เปลี่ยนสถานะถุงเลือดเป็นรอทำลายแล้ว");
+// Matching / Issue: record blood usage
+document.querySelector('.manage-btn.match')?.addEventListener('click', async () => {
+  if (!currentBag) return;
+  const patientIdRaw = prompt('กรุณาระบุรหัสผู้ป่วย (Patient ID, ตัวเลข):');
+  if (patientIdRaw === null) return;
+  const patientId = parseInt(patientIdRaw);
+  if (!patientId || isNaN(patientId)) {
+    alert('รหัสผู้ป่วยไม่ถูกต้อง');
+    return;
+  }
+  const today = new Date().toISOString().split('T')[0];
+  try {
+    await apiPost('/api/blood/usage', {
+      usageDate: today,
+      patientId,
+      bagId: currentBag.bagId,
+      employeeId: getEmployeeId()
+    });
+    alert('บันทึกการจ่ายเลือดเรียบร้อยแล้ว');
+    await loadBag();
+  } catch (err) {
+    alert(`เกิดข้อผิดพลาด: ${err.message}`);
+  }
 });
 
-renderBag();
+// Reserve: not directly supported by API
+document.querySelector('.manage-btn.reserve')?.addEventListener('click', () => {
+  alert('ฟังก์ชันจองยังไม่รองรับโดยตรงผ่าน API\nกรุณาติดต่อผู้ดูแลระบบ');
+});
+
+// Discard: not directly supported by API
+discardBtn?.addEventListener('click', () => {
+  alert('ฟังก์ชันทำลายถุงเลือดยังไม่รองรับโดยตรงผ่าน API\nกรุณาติดต่อผู้ดูแลระบบ');
+});
+
+loadBag();

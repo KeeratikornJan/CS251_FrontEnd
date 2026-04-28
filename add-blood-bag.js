@@ -1,80 +1,80 @@
-const STORAGE_KEY = "bloodbank_bags";
+const bloodBagForm = document.querySelector('#bloodBagForm');
+const linkDonationBtn = document.querySelector('#linkDonationBtn');
+const donationInput = document.querySelector('#donationInput');
+const donorNameEl = document.querySelector('#donorName');
+const donorBloodEl = document.querySelector('#donorBlood');
+const submitBtn = bloodBagForm.querySelector('.submit-btn');
 
-const bloodBagForm = document.querySelector("#bloodBagForm");
-const linkDonationBtn = document.querySelector("#linkDonationBtn");
-const donationInput = document.querySelector("#donationInput");
-const donorName = document.querySelector("#donorName");
-const donorBlood = document.querySelector("#donorBlood");
+let linkedDonorId = null;
 
-const donorReferences = {
-  "DONATION-12349": {
-    name: "คุณจักรภัทร แก้วพันธุ์พงษ์ (DON-12349)",
-    blood: "B- (รอเลือดยืนยัน)"
-  },
-  "DONATION-12347": {
-    name: "คุณชยธร โตระรัตนประดิษฐ์ (DON-12347)",
-    blood: "O / Positive (+)"
+function setLoading(loading) {
+  submitBtn.disabled = loading;
+  submitBtn.textContent = loading ? 'กำลังบันทึก...' : 'บันทึกถุงเลือด';
+}
+
+linkDonationBtn.addEventListener('click', async () => {
+  const raw = donationInput.value.trim();
+  const donorId = parseInt(raw);
+
+  if (!raw || isNaN(donorId)) {
+    alert('กรุณาระบุรหัสผู้บริจาค (ตัวเลข)');
+    return;
   }
-};
 
-function getBags() {
-  const bags = localStorage.getItem(STORAGE_KEY);
-
-  if (!bags) return [];
+  linkDonationBtn.disabled = true;
+  linkDonationBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> กำลังค้นหา...';
 
   try {
-    return JSON.parse(bags);
-  } catch (error) {
-    return [];
+    const profile = await apiGet(`/api/donors/${donorId}/profile`);
+    linkedDonorId = donorId;
+    donorNameEl.textContent = `คุณ${profile.name} (DON-${String(profile.donorId).padStart(5, '0')})`;
+    donorBloodEl.textContent = `${profile.bloodGroup}${profile.rhFactor} (รอผลยืนยันห้องแล็บ)`;
+  } catch (err) {
+    alert(`ไม่พบผู้บริจาครหัส ${donorId}: ${err.message}`);
+    linkedDonorId = null;
+    donorNameEl.textContent = 'ไม่พบข้อมูล';
+    donorBloodEl.textContent = '-';
+  } finally {
+    linkDonationBtn.disabled = false;
+    linkDonationBtn.innerHTML = '<i class="fa-solid fa-link"></i> ดึงข้อมูล';
   }
-}
-
-function saveBags(bags) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(bags));
-}
-
-function formatThaiDate(dateValue) {
-  if (!dateValue) return "-";
-
-  const date = new Date(dateValue);
-  const months = ["ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.", "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค."];
-  return `${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear() + 543}`;
-}
-
-function getGroupFromText(text) {
-  const match = text.match(/(AB|A|B|O)\s*\/?\s*(Positive \(\+\)|Negative \(-\)|[+-])/i);
-  if (!match) return "B-";
-
-  const rh = match[2].includes("+") || match[2].toLowerCase().includes("positive") ? "+" : "-";
-  return `${match[1].toUpperCase()}${rh}`;
-}
-
-linkDonationBtn.addEventListener("click", () => {
-  const reference = donorReferences[donationInput.value.trim().toUpperCase()] || donorReferences["DONATION-12349"];
-  donorName.textContent = reference.name;
-  donorBlood.textContent = reference.blood;
 });
 
-bloodBagForm.addEventListener("submit", (event) => {
+bloodBagForm.addEventListener('submit', async (event) => {
   event.preventDefault();
 
-  const formData = new FormData(bloodBagForm);
-  const bags = getBags();
+  if (!linkedDonorId) {
+    alert('กรุณาดึงข้อมูลผู้บริจาคก่อนบันทึก');
+    return;
+  }
 
-  const newBag = {
-    id: formData.get("bagId"),
-    component: formData.get("component"),
-    group: getGroupFromText(donorBlood.textContent),
-    receivedDate: formatThaiDate(formData.get("receivedDate")),
-    expiryDate: formatThaiDate(formData.get("expiryDate")),
-    volume: Number(formData.get("volume")),
-    status: "พร้อมใช้งาน",
-    donationId: formData.get("donationId") || "DONATION-12349"
+  const fd = new FormData(bloodBagForm);
+  const donationDate = fd.get('receivedDate');
+  const volume = parseInt(fd.get('volume'));
+
+  if (!donationDate) {
+    alert('กรุณาระบุวันที่ถ่ายเติม');
+    return;
+  }
+  if (!volume || volume <= 0) {
+    alert('กรุณาระบุปริมาณบรรจุที่ถูกต้อง');
+    return;
+  }
+
+  const body = {
+    donationDate,
+    volume,
+    donorId: linkedDonorId,
+    employeeId: getEmployeeId()
   };
 
-  bags.unshift(newBag);
-  saveBags(bags);
-
-  alert("บันทึกข้อมูลถุงเลือดเรียบร้อยแล้ว");
-  window.location.href = "blood-inventory.html";
+  setLoading(true);
+  try {
+    const donationId = await apiPost('/api/blood/donations', body);
+    alert(`บันทึกการรับบริจาคเรียบร้อยแล้ว (Donation ID: ${donationId})`);
+    window.location.href = 'blood-inventory.html';
+  } catch (err) {
+    alert(`เกิดข้อผิดพลาด: ${err.message}`);
+    setLoading(false);
+  }
 });

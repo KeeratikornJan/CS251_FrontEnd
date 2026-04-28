@@ -1,61 +1,55 @@
-const STORAGE_KEY = "bloodbank_donors";
+const donorForm = document.querySelector('#donorForm');
+const submitBtn = donorForm.querySelector('.submit-btn');
 
-const donorForm = document.querySelector("#donorForm");
-
-function getDonors() {
-  const donors = localStorage.getItem(STORAGE_KEY);
-
-  if (!donors) return [];
-
-  try {
-    return JSON.parse(donors);
-  } catch (error) {
-    return [];
-  }
+function mapGender(thaiGender) {
+  if (thaiGender === 'ชาย') return 'M';
+  if (thaiGender === 'หญิง') return 'F';
+  return 'M';
 }
 
-function saveDonors(donors) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(donors));
+function setLoading(loading) {
+  submitBtn.disabled = loading;
+  submitBtn.textContent = loading ? 'กำลังบันทึก...' : 'บันทึกผู้บริจาค';
 }
 
-function generateDonorId(donors) {
-  const donorNumbers = donors
-    .map((donor) => Number(String(donor.id).replace("DON-", "")))
-    .filter((number) => Number.isFinite(number));
-
-  const nextNumber = donorNumbers.length > 0 ? Math.max(...donorNumbers) + 1 : 12345;
-  return `DON-${String(nextNumber).padStart(5, "0")}`;
-}
-
-donorForm.addEventListener("submit", (event) => {
+donorForm.addEventListener('submit', async (event) => {
   event.preventDefault();
+  const fd = new FormData(donorForm);
 
-  const formData = new FormData(donorForm);
-  const donors = getDonors();
-  const bloodGroup = formData.get("bloodGroup");
-  const rhFactor = formData.get("rhFactor");
+  const nationalId = fd.get('citizenId').replace(/[-\s]/g, '');
+  if (nationalId.length !== 13) {
+    alert('กรุณากรอกเลขบัตรประชาชน 13 หลัก');
+    return;
+  }
 
-  const newDonor = {
-    id: generateDonorId(donors),
-    name: formData.get("fullName"),
-    group: `${bloodGroup}${rhFactor}`,
-    lastDonate: "-",
-    status: "ผู้บริจาคใหม่",
-    profile: {
-      citizenId: formData.get("citizenId"),
-      gender: formData.get("gender"),
-      birthDate: formData.get("birthDate"),
-      phone: formData.get("phone"),
-      username: formData.get("username"),
-      email: formData.get("email"),
-      address: formData.get("address"),
-      disease: formData.get("disease")
-    }
+  const password = fd.get('password');
+  if (password.length < 6) {
+    alert('รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร');
+    return;
+  }
+
+  const body = {
+    name: fd.get('fullName'),
+    nationalId,
+    gender: mapGender(fd.get('gender')),
+    birthday: fd.get('birthDate'),
+    bloodGroup: fd.get('bloodGroup'),
+    rhFactor: fd.get('rhFactor'),
+    congenitalDisease: fd.get('disease') || 'ไม่มี',
+    email: fd.get('email'),
+    phone: fd.get('phone'),
+    place: fd.get('address') || '',
+    username: fd.get('username'),
+    password
   };
 
-  donors.unshift(newDonor);
-  saveDonors(donors);
-
-  alert("บันทึกข้อมูลผู้บริจาคเรียบร้อยแล้ว");
-  window.location.href = "donor-management.html";
+  setLoading(true);
+  try {
+    const donorId = await apiPost('/api/donors/register', body);
+    alert(`บันทึกผู้บริจาคเรียบร้อยแล้ว (Donor ID: ${donorId})`);
+    window.location.href = 'donor-management.html';
+  } catch (err) {
+    alert(`เกิดข้อผิดพลาด: ${err.message}`);
+    setLoading(false);
+  }
 });

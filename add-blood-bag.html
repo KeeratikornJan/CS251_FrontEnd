@@ -27,9 +27,9 @@
           <h2>แหล่งที่มาและอ้างอิง</h2>
 
           <label class="field wide">
-            <span>อ้างอิงรหัสจากประวัติการบริจาค</span>
+            <span>รหัสผู้บริจาค (Donor ID)</span>
             <div class="reference-row">
-              <input id="donationInput" name="donationId" placeholder="DONATION-XXXXX" />
+              <input id="donationInput" name="donationId" placeholder="ระบุรหัสผู้บริจาค (ตัวเลข)" type="number" min="1" />
               <button class="link-data-btn" type="button" id="linkDonationBtn">
                 <i class="fa-solid fa-link"></i>
                 ดึงข้อมูล
@@ -91,6 +91,7 @@
     </main>
   </div>
 
+  <script src="api.js"></script>
   <script src="shared-topbar-sidebar.js"></script>
   <script src="add-blood-bag.js"></script>
 </body>
