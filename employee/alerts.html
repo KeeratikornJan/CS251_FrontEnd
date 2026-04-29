@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>แจ้งเตือน | BloodBank Staff</title>
+  <link rel="stylesheet" href="shared-topbar-sidebar.css" />
+  <link rel="stylesheet" href="shared-ui.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <style>
+    .alerts-wrap { max-width: 900px; }
+
+    /* Container — alerts.js writes directly into #alertList */
+    #alertList {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-top: 8px;
+    }
+
+    /* Card shell — JS adds class: high | medium | low | info */
+    .alert-card {
+      display: flex;
+      background: #fff;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      border: 1px solid #eee;
+    }
+
+    /* Left colored stripe — class name used by JS */
+    .alert-stripe { width: 8px; flex-shrink: 0; }
+
+    /* Right content area — class name used by JS */
+    .alert-body { padding: 20px 24px; flex-grow: 1; }
+
+    .alert-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 8px;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    /* Title — class name used by JS */
+    .alert-title {
+      font-size: 16px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Timestamp badge — class name used by JS */
+    .alert-date {
+      padding: 4px 14px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    /* Body text — class name used by JS */
+    .alert-msg {
+      font-size: 14px;
+      color: #555;
+      margin-bottom: 14px;
+      line-height: 1.6;
+    }
+
+    /* Action button — class name used by JS */
+    .detail-btn {
+      display: inline-block;
+      padding: 10px 28px;
+      min-width: 140px;
+      border-radius: 8px;
+      border: none;
+      font-weight: 600;
+      cursor: pointer;
+      color: white;
+      font-family: inherit;
+      font-size: 14px;
+      letter-spacing: 0.3px;
+      transition: opacity 0.2s, transform 0.15s;
+    }
+    .detail-btn:hover { opacity: 0.88; transform: translateY(-1px); }
+    .detail-btn:active { transform: translateY(0); }
+
+    /* ── Severity themes ── */
+
+    /* HIGH → red (critical stock / urgent) */
+    .alert-card.high .alert-stripe  { background: #eb2d2d; }
+    .alert-card.high .alert-body    { background: #fff5f5; }
+    .alert-card.high .alert-title   { color: #eb2d2d; }
+    .alert-card.high .detail-btn    { background: #eb2d2d; }
+    .alert-card.high .alert-date    { background: #ffebeb; color: #eb2d2d; }
+
+    /* MEDIUM → orange-red (warnings) */
+    .alert-card.medium .alert-stripe { background: #f44336; }
+    .alert-card.medium .alert-body   { background: #fff8f7; }
+    .alert-card.medium .alert-title  { color: #d32f2f; }
+    .alert-card.medium .detail-btn   { background: #d32f2f; }
+    .alert-card.medium .alert-date   { background: #fff0f0; color: #d32f2f; }
+
+    /* LOW → yellow (notices) */
+    .alert-card.low .alert-stripe { background: #fbc02d; }
+    .alert-card.low .alert-body   { background: #fffef2; }
+    .alert-card.low .alert-title  { color: #b45309; }
+    .alert-card.low .detail-btn   { background: #fbc02d; color: #1a1a1a; }
+    .alert-card.low .alert-date   { background: #fefce8; color: #b45309; }
+
+    /* INFO → blue (informational) */
+    .alert-card.info .alert-stripe { background: #2196f3; }
+    .alert-card.info .alert-body   { background: #f0f7ff; }
+    .alert-card.info .alert-title  { color: #1976d2; }
+    .alert-card.info .detail-btn   { background: #1976d2; }
+    .alert-card.info .alert-date   { background: #e3f2fd; color: #1976d2; }
+
+    .loading-state { text-align: center; color: var(--muted); padding: 48px; font-size: 15px; }
+    .empty-state   { text-align: center; color: var(--muted); padding: 48px; }
+  </style>
+</head>
+<body data-active-menu="notification">
+  <div id="layoutRoot">
+    <main class="page-content" id="pageContent">
+      <section class="page-head">
+        <h1>แจ้งเตือนส่วนกลาง</h1>
+      </section>
+
+      <div class="alerts-wrap">
+        <div id="alertList">
+          <div class="loading-state">
+            <i class="fa-solid fa-spinner fa-spin"></i> กำลังโหลด...
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="../api.js"></script>
+  <script src="shared-topbar-sidebar.js"></script>
+  <script src="alerts.js"></script>
+</body>
+</html>

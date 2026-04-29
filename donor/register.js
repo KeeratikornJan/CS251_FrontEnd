@@ -6,9 +6,9 @@ const API_BASE = 'http://localhost:8080';
   if (token) {
     try {
       const user = JSON.parse(localStorage.getItem('auth_user') || 'null');
-      window.location.replace(user && user.role === 'Donor' ? 'donor-portal.html' : 'dashboard.html');
+      window.location.replace(user && user.role === 'Donor' ? 'donor-portal.html' : '../employee/dashboard.html');
     } catch {
-      window.location.replace('dashboard.html');
+      window.location.replace('../employee/dashboard.html');
     }
   }
 })();

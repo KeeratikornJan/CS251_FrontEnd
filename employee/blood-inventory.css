@@ -155,9 +155,22 @@ tbody tr:last-child td {
 }
 
 .status.expired {
-  background: #f3f4f6;
-  border-color: #d1d5db;
-  color: #6b7280;
+  background: #ffecec;
+  border-color: #ff7a7a;
+  color: #c0000a;
+  font-weight: 700;
+}
+
+tr.row-expired {
+  background: #fff5f5;
+}
+
+tr.row-expired td {
+  color: #7a0000;
+}
+
+tr.row-expired .bag-link {
+  color: #c0000a;
 }
 
 .detail-btn {

@@ -1,191 +1,80 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>เข้าสู่ระบบ | BloodBank Staff</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    body {
-      font-family: 'Sarabun', sans-serif;
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: #f3f4f8;
-    }
-
-    .login-card {
-      background: #fff;
-      border-radius: 16px;
-      box-shadow: 0 4px 24px rgba(0, 0, 0, .1);
-      padding: 2.5rem 2rem;
-      width: 100%;
-      max-width: 400px;
-    }
-
-    .login-brand {
-      display: flex;
-      align-items: center;
-      gap: .75rem;
-      margin-bottom: 2rem;
-      color: #3b4fa8;
-    }
-
-    .login-brand i { font-size: 2.25rem; }
-
-    .login-brand h1 { font-size: 1.4rem; font-weight: 700; line-height: 1.2; }
-    .login-brand p  { font-size: .875rem; color: #64748b; font-weight: 400; }
-
-    .field {
-      display: flex;
-      flex-direction: column;
-      gap: .375rem;
-      margin-bottom: 1rem;
-    }
-
-    .field label { font-size: .875rem; font-weight: 500; color: #374151; }
-
-    .field input {
-      padding: .625rem .875rem;
-      border: 1.5px solid #d1d5db;
-      border-radius: 8px;
-      font-family: inherit;
-      font-size: 1rem;
-      outline: none;
-      transition: border-color .15s;
-    }
-
-    .field input:focus { border-color: #3b4fa8; }
-
-    .error-msg {
-      background: #fee2e2;
-      color: #dc2626;
-      border-radius: 8px;
-      padding: .625rem .875rem;
-      font-size: .875rem;
-      margin-bottom: 1rem;
-      display: none;
-    }
-
-    .error-msg.show { display: block; }
-
-    .submit-btn {
-      width: 100%;
-      padding: .75rem;
-      background: #3b4fa8;
-      color: #fff;
-      border: none;
-      border-radius: 8px;
-      font-family: inherit;
-      font-size: 1rem;
-      font-weight: 600;
-      cursor: pointer;
-      margin-top: .5rem;
-      transition: background .15s;
-    }
-
-    .submit-btn:hover:not(:disabled) { background: #2d3d87; }
-    .submit-btn:disabled { background: #9ca3af; cursor: not-allowed; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blood Bank Management System | Home</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="donor/donor-style.css">
 </head>
 <body>
-  <div class="login-card">
-    <div class="login-brand">
-      <i class="fa-solid fa-user-doctor"></i>
-      <div>
-        <h1>BloodBank Staff</h1>
-        <p>ระบบจัดการธนาคารเลือด</p>
-      </div>
+    <div class="background-animation">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+        <div class="grid-overlay"></div>
     </div>
 
-    <div class="error-msg" id="errorMsg"></div>
+    <main class="container">
+        <div class="glass-card">
+            <div class="logo-container">
+                <i class="fa-solid fa-droplet logo-icon"></i>
+            </div>
+            <h1 class="title">Blood Bank<br><span class="highlight">Management System</span></h1>
+            <p class="description">
+                ระบบจัดการธนาคารเลือดที่ทันสมัย รวดเร็ว และปลอดภัย<br>
+                บูรณาการข้อมูลครบวงจรเพื่อการให้โลหิตที่มีประสิทธิภาพสูงสุด
+            </p>
 
-    <form id="loginForm">
-      <div class="field">
-        <label for="username">ชื่อผู้ใช้</label>
-        <input id="username" name="username" type="text" placeholder="username"
-          required autocomplete="username" />
-      </div>
-      <div class="field">
-        <label for="password">รหัสผ่าน</label>
-        <input id="password" name="password" type="password" placeholder="••••••••"
-          required autocomplete="current-password" />
-      </div>
-      <button class="submit-btn" type="submit" id="submitBtn">
-        <i class="fa-solid fa-right-to-bracket"></i>
-        เข้าสู่ระบบ
-      </button>
-    </form>
+            <h2 class="subtitle">กรุณาเลือกประเภทผู้ใช้งาน</h2>
 
-    <p style="text-align:center;margin-top:1.25rem;font-size:.875rem;color:#64748b">
-      ยังไม่มีบัญชี?
-      <a href="register.html" style="color:#3b4fa8;font-weight:600;text-decoration:none">สมัครสมาชิก</a>
-    </p>
-  </div>
+            <div class="button-group">
+                <a href="donor/donor-login.html" class="btn btn-donor" id="donorBtn">
+                    <div class="btn-content">
+                        <i class="fa-solid fa-hand-holding-heart"></i>
+                        <span>เข้าสู่ระบบผู้บริจาค<br><small>(Donor)</small></span>
+                    </div>
+                </a>
 
-  <script>
-    const API_BASE = 'http://localhost:8080';
+                <a href="employee/employee-login.html" class="btn btn-staff" id="staffBtn">
+                    <div class="btn-content">
+                        <i class="fa-solid fa-user-doctor"></i>
+                        <span>เข้าสู่ระบบเจ้าหน้าที่<br><small>(Staff)</small></span>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </main>
 
-    (function () {
-      const token = localStorage.getItem('auth_token');
-      if (token) {
-        try {
-          const user = JSON.parse(localStorage.getItem('auth_user') || 'null');
-          window.location.replace(user && user.role === 'Donor' ? 'donor-portal.html' : 'dashboard.html');
-        } catch {
-          window.location.replace('dashboard.html');
-        }
-      }
-    })();
+    <script>
+        // Redirect already-logged-in users
+        (function () {
+            const token = localStorage.getItem('auth_token');
+            if (token) {
+                try {
+                    const user = JSON.parse(localStorage.getItem('auth_user') || 'null');
+                    window.location.replace(user && user.role === 'Donor' ? 'donor/donor-portal.html' : 'employee/dashboard.html');
+                } catch {
+                    window.location.replace('employee/dashboard.html');
+                }
+            }
+        })();
 
-    const form      = document.getElementById('loginForm');
-    const errorMsg  = document.getElementById('errorMsg');
-    const submitBtn = document.getElementById('submitBtn');
-
-    function showError(msg) {
-      errorMsg.textContent = msg;
-      errorMsg.classList.add('show');
-    }
-
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      errorMsg.classList.remove('show');
-      submitBtn.disabled = true;
-      submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> กำลังเข้าสู่ระบบ...';
-
-      const username = document.getElementById('username').value.trim();
-      const password = document.getElementById('password').value;
-
-      try {
-        const res = await fetch(`${API_BASE}/api/auth/login`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ username, password })
+        // Ripple effect on buttons
+        document.querySelectorAll('.btn').forEach(btn => {
+            btn.addEventListener('click', function (e) {
+                const ripple = document.createElement('span');
+                ripple.classList.add('ripple');
+                const rect = btn.getBoundingClientRect();
+                ripple.style.left = (e.clientX - rect.left) + 'px';
+                ripple.style.top  = (e.clientY - rect.top) + 'px';
+                btn.appendChild(ripple);
+                setTimeout(() => ripple.remove(), 600);
+            });
         });
-        const json = await res.json();
-        if (!res.ok || !json.success) {
-          throw new Error(json.message || 'เข้าสู่ระบบไม่สำเร็จ');
-        }
-        const data = json.data;
-        localStorage.setItem('auth_token', data.accessToken);
-        localStorage.setItem('auth_user', JSON.stringify(data.user));
-        const dest = data.user && data.user.role === 'Donor' ? 'donor-portal.html' : 'dashboard.html';
-        window.location.replace(dest);
-      } catch (err) {
-        const isCorsOrNetwork = err instanceof TypeError && err.message === 'Failed to fetch';
-        showError(isCorsOrNetwork
-          ? 'ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้ กรุณาตรวจสอบว่า Backend กำลังทำงานอยู่'
-          : (err.message || 'เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง'));
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = '<i class="fa-solid fa-right-to-bracket"></i> เข้าสู่ระบบ';
-      }
-    });
-  </script>
+    </script>
 </body>
 </html>

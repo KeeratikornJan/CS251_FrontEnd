@@ -56,5 +56,5 @@ layoutRoot.innerHTML = `
 document.getElementById('logoutBtn')?.addEventListener('click', () => {
   localStorage.removeItem('auth_token');
   localStorage.removeItem('auth_user');
-  window.location.href = 'index.html';
+  window.location.href = '../index.html';
 });

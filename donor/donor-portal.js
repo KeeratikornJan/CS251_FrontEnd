@@ -8,7 +8,7 @@ document.getElementById('welcomeName').textContent = user?.fullName || user?.use
 document.getElementById('logoutBtn').addEventListener('click', () => {
   localStorage.removeItem('auth_token');
   localStorage.removeItem('auth_user');
-  window.location.replace('index.html');
+  window.location.replace('../index.html');
 });
 
 function rhLabel(rh) {

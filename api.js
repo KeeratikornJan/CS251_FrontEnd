@@ -32,7 +32,7 @@ async function apiRequest(method, path, body = null) {
   if (res.status === 401) {
     localStorage.removeItem('auth_token');
     localStorage.removeItem('auth_user');
-    window.location.replace('index.html');
+    window.location.replace('/index.html');
     return;
   }
   const json = await res.json();
@@ -59,21 +59,21 @@ function formatThaiDate(isoDate) {
 // Redirect to login if not authenticated; redirect donors away from employee pages
 (function () {
   const path = window.location.pathname;
-  const onLogin  = path.endsWith('index.html') || path === '/' || path.endsWith('/');
-  const onDonorPortal = path.endsWith('donor-portal.html');
+  const onLogin = path.endsWith('index.html') || path.endsWith('employee-login.html') || path.endsWith('donor-login.html') || path === '/' || path.endsWith('/');
+  const onDonorPage = path.endsWith('donor-portal.html') || path.endsWith('donation-history.html') || path.endsWith('donor-profile.html');
 
   if (!onLogin && !getToken()) {
-    window.location.replace('index.html');
+    window.location.replace('/index.html');
     return;
   }
 
   if (!onLogin && getToken()) {
     const user = getAuthUser();
-    if (user && user.role === 'Donor' && !onDonorPortal) {
-      window.location.replace('donor-portal.html');
+    if (user && user.role === 'Donor' && !onDonorPage) {
+      window.location.replace('/donor/donor-portal.html');
     }
-    if (user && user.role === 'Employee' && onDonorPortal) {
-      window.location.replace('dashboard.html');
+    if (user && user.role === 'Employee' && onDonorPage) {
+      window.location.replace('/employee/dashboard.html');
     }
   }
 })();

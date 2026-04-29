@@ -1,6 +1,6 @@
-let selectedBagId  = null;
-let savedDonorName = null;
-let savedBagLabel  = null;
+let selectedBagId   = null;
+let selectedBagCount = 0;
+let savedDonorName  = null;
 
 const donorIdInput   = document.getElementById('donorIdInput');
 const searchBtn      = document.getElementById('searchBtn');
@@ -38,7 +38,7 @@ document.querySelectorAll('.disease-select').forEach(sel => {
   sel.addEventListener('change', updateDiseaseColors);
 });
 
-function showSuccessPanel(isAllNegative, donorName, bagLabel) {
+function showSuccessPanel(isAllNegative, donorName, bagCount) {
   donorCard.classList.add('hidden');
   testForm.classList.add('hidden');
   hideMsg();
@@ -49,13 +49,13 @@ function showSuccessPanel(isAllNegative, donorName, bagLabel) {
 
   successDetails.innerHTML =
     `ผู้บริจาค : <strong>${donorName}</strong><br>` +
-    `ถุงเลือด  : <strong>${bagLabel}</strong>`;
+    `จำนวนถุงเลือด : <strong>${bagCount} ถุง</strong>`;
 
   if (isAllNegative) {
-    successStatus.textContent = '✓ ผลตรวจปกติทุกรายการ — ถุงเลือดพร้อมใช้งาน';
+    successStatus.textContent = `✓ ผลตรวจปกติทุกรายการ — ${bagCount} ถุงเลือดพร้อมใช้งาน`;
     successStatus.className   = 'success-status cleared';
   } else {
-    successStatus.textContent = '✕ พบผลผิดปกติ — ถุงเลือดถูกตั้งค่ารอทบทวน';
+    successStatus.textContent = `✕ พบผลผิดปกติ — ${bagCount} ถุงเลือดถูกตั้งค่ารอทบทวน`;
     successStatus.className   = 'success-status reactive';
   }
 
@@ -84,7 +84,8 @@ async function handleSearch() {
   donorCard.classList.add('hidden');
   testForm.classList.add('hidden');
   successPanel.classList.add('hidden');
-  selectedBagId = null;
+  selectedBagId    = null;
+  selectedBagCount = 0;
 
   const donorId = parseDonorId(donorIdInput.value);
   if (!donorId) { showMsg('กรุณากรอกรหัสผู้บริจาคให้ถูกต้อง (เช่น DON-13579)', 'error'); return; }
@@ -98,15 +99,22 @@ async function handleSearch() {
       apiGet(`/api/blood/bags/by-donor/${donorId}`)
     ]);
 
-    // Find the most recent bag that has NOT been tested yet (BagStatus = 0 or BagStatus = anything new)
-    const bag = bags && bags.length > 0 ? bags[0] : null;
+    // Find pending bags (BagStatus === 1) from the most recent donation
+    const pendingBags = bags ? bags.filter(b => b.bagStatus === 1) : [];
+    const recentDonationId = pendingBags.length > 0 ? pendingBags[0].donationId : null;
+    const donationBags = recentDonationId
+      ? pendingBags.filter(b => b.donationId === recentDonationId)
+      : [];
+
+    const bag = donationBags.length > 0 ? donationBags[0] : null;
 
     savedDonorName = donor.name || '—';
-    savedBagLabel  = bag ? `BAG-${String(bag.bagId).padStart(6, '0')}` : '—';
 
     document.getElementById('donorName').textContent      = savedDonorName;
     document.getElementById('collectionDate').textContent = bag ? formatThaiDate(bag.collectionDate) : '—';
-    document.getElementById('bloodComponent').textContent = bag ? (bag.componentType || '—') : '—';
+    document.getElementById('bloodComponent').textContent = donationBags.length > 1
+      ? donationBags.map(b => b.componentType).join(', ')
+      : (bag ? (bag.componentType || '—') : '—');
 
     // rhFactor from DB is '+' or '-'
     const rhLabel = donor.rhFactor === '+' ? 'Positive' : 'Negative';
@@ -122,10 +130,11 @@ async function handleSearch() {
     donorCard.classList.remove('hidden');
 
     if (bag) {
-      selectedBagId = bag.bagId;
+      selectedBagId    = bag.bagId;
+      selectedBagCount = donationBags.length;
       testForm.classList.remove('hidden');
     } else {
-      showMsg('ไม่พบถุงเลือดของผู้บริจาครายนี้', 'error');
+      showMsg('ไม่พบถุงเลือดที่รอตรวจของผู้บริจาครายนี้', 'error');
     }
   } catch (err) {
     showMsg(`ไม่พบข้อมูล: ${err.message}`, 'error');
@@ -171,8 +180,7 @@ async function handleSubmit() {
 
   try {
     await apiPost('/api/blood/tests', body);
-    // Show prominent success panel with countdown
-    showSuccessPanel(isAllNegative, savedDonorName, savedBagLabel);
+    showSuccessPanel(isAllNegative, savedDonorName, selectedBagCount);
     donorIdInput.value = '';
     selectedBagId = null;
   } catch (err) {

@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>บันทึกผลทางห้องปฏิบัติการ | BloodBank Staff</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&family=Prompt:wght@300;400;500;600&family=Sarabun:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="shared-topbar-sidebar.css">
+    <link rel="stylesheet" href="shared-ui.css">
+    <style>
+        body { overflow-y: scroll; }
+        .app-layout { grid-template-columns: 240px 1fr !important; }
+        .nav-link { white-space: nowrap; }
+        .page-title-header { font-size: 22px; font-weight: 600; color: var(--text); margin: 0 auto 24px auto; max-width: 900px; }
+        .test-form-card { background: #fff; border-radius: 12px; padding: 40px; max-width: 900px; margin: 0 auto; box-shadow: 0 4px 20px rgba(0,0,0,0.03); font-family: 'Prompt', sans-serif; }
+        .search-area { margin-bottom: 30px; }
+        .search-area label { display: block; font-weight: 500; color: #333; margin-bottom: 8px; font-size: 15px; }
+        .search-flex { display: flex; gap: 12px; max-width: 500px; }
+        .search-input { flex: 1; height: 42px; border: 1px solid #dcdfe7; border-radius: 6px; padding: 0 16px; font-family: 'Prompt', sans-serif; font-size: 15px; outline: none; }
+        .search-input:focus { border-color: var(--brand); }
+        .search-input::placeholder { color: #a0aec0; }
+        .btn-search { background: var(--brand); color: #fff; border: none; border-radius: 6px; padding: 0 24px; font-weight: 500; font-family: 'Prompt', sans-serif; cursor: pointer; transition: opacity 0.2s; }
+        .btn-search:hover { opacity: 0.9; }
+        .btn-search:disabled { background: #cbd5e1; cursor: not-allowed; }
+        .info-panel { background: #f4f5f8; border-radius: 10px; padding: 20px 30px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; opacity: 0.5; pointer-events: none; transition: 0.3s; }
+        .info-panel.active { opacity: 1; pointer-events: auto; }
+        .info-name-val { font-weight: 600; color: var(--brand); font-size: 16px; }
+        .info-group { text-align: center; }
+        .info-label { font-size: 12px; color: var(--muted); margin-bottom: 4px; }
+        .info-val { font-weight: 600; font-size: 15px; color: #333; }
+        .val-red { color: var(--danger); }
+        .section-header { font-size: 16px; font-weight: 500; color: var(--brand); margin-bottom: 16px; }
+        .form-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 30px; }
+        .form-group label { display: block; font-size: 14px; color: var(--muted); margin-bottom: 8px; }
+        .custom-select { width: 100%; height: 42px; border: 1px solid #dcdfe7; border-radius: 6px; padding: 0 16px; font-family: 'Prompt', sans-serif; font-size: 14px; color: #333; appearance: none; background: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23333' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e") no-repeat right 16px center/14px; }
+        .select-green-border { border-left: 5px solid var(--ok); }
+        .select-green-border.reactive { border-left-color: var(--danger); }
+        .submit-wrapper { text-align: center; margin-top: 40px; }
+        .btn-submit { background: var(--brand); color: #fff; border: none; border-radius: 8px; padding: 12px 48px; font-size: 16px; font-weight: 500; font-family: 'Prompt', sans-serif; cursor: pointer; transition: opacity 0.2s; }
+        .btn-submit:hover:not(:disabled) { opacity: 0.9; }
+        .btn-submit:disabled { background: #cbd5e1; cursor: not-allowed; }
+        .msg-box { padding: 12px 20px; border-radius: 8px; margin: 16px 0; font-size: 14px; display: none; }
+        .msg-box.error { background: #fff5f5; border: 1px solid #feb2b2; color: #c53030; display: block; }
+        .msg-box.success { background: #f0fff4; border: 1px solid #9ae6b4; color: #276749; display: block; }
+        .msg-box.hidden { display: none; }
+        .success-panel { text-align: center; padding: 40px 20px; }
+        .success-icon { font-size: 60px; color: #38a169; margin-bottom: 16px; }
+        .success-panel.hidden { display: none; }
+        .success-status { margin-top: 12px; padding: 10px 20px; border-radius: 8px; font-weight: 600; font-size: 15px; }
+        .success-status.cleared { background: #f0fff4; color: #276749; }
+        .success-status.reactive { background: #fff5f5; color: #c53030; }
+        .redirect-note { color: #718096; margin-top: 16px; font-size: 14px; }
+        .btn-now { background: var(--brand); color: #fff; border: none; border-radius: 8px; padding: 10px 32px; font-family: 'Prompt', sans-serif; font-size: 14px; cursor: pointer; margin-top: 16px; }
+    </style>
+</head>
+<body data-active-menu="blood-test">
+    <div id="layoutRoot">
+        <div id="pageContent">
+            <h1 class="page-title-header">บันทึกผลทางห้องปฏิบัติการ</h1>
+
+            <div class="test-form-card">
+                <!-- Step 1: Search donor -->
+                <div class="search-area">
+                    <label>กรอกรหัสผู้บริจาค</label>
+                    <div class="search-flex">
+                        <input type="text" id="donorIdInput" class="search-input" placeholder="DON-13579">
+                        <button id="searchBtn" class="btn-search" type="button">ค้นหาข้อมูล</button>
+                    </div>
+                </div>
+
+                <!-- Donor info card -->
+                <div id="donorCard" class="info-panel">
+                    <div class="info-name-val" id="donorName">—</div>
+                    <div class="info-group">
+                        <div class="info-label">วันที่เก็บเลือด</div>
+                        <div class="info-val" id="collectionDate">—</div>
+                    </div>
+                    <div class="info-group">
+                        <div class="info-label">ประเภทกระบวนการ</div>
+                        <div class="info-val" id="bloodComponent">—</div>
+                    </div>
+                    <div class="info-group">
+                        <div class="info-label">หมู่เลือด</div>
+                        <div class="info-val val-red" id="bloodGroupDisplay">—</div>
+                    </div>
+                </div>
+
+                <!-- Test form -->
+                <div id="testForm" class="hidden">
+                    <div class="section-header">Comfarmatory Test</div>
+                    <div class="form-grid-2">
+                        <div class="form-group">
+                            <label>ABO Blood Group</label>
+                            <select id="confirmatoryAbo" class="custom-select">
+                                <option value="A">A</option>
+                                <option value="B">B</option>
+                                <option value="AB">AB</option>
+                                <option value="O">O</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Rh Factor</label>
+                            <select id="confirmatoryRh" class="custom-select">
+                                <option value="Positive">Positive (+)</option>
+                                <option value="Negative">Negative (-)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="section-header">Infectious Diseases Results</div>
+                    <div class="form-grid-2">
+                        <div class="form-group">
+                            <label>ไวรัสเอชไอวี (HIV)</label>
+                            <select id="hiv" class="custom-select select-green-border disease-select">
+                                <option value="Non-Reactive">Non-Reactive(-) ปกติ</option>
+                                <option value="Reactive">Reactive(+) ผิดปกติ</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>ไวรัสตับอักเสบบี (HBsAG)</label>
+                            <select id="hbsag" class="custom-select select-green-border disease-select">
+                                <option value="Non-Reactive">Non-Reactive(-) ปกติ</option>
+                                <option value="Reactive">Reactive(+) ผิดปกติ</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>ไวรัสตับอักเสบซี (HCV)</label>
+                            <select id="hcv" class="custom-select select-green-border disease-select">
+                                <option value="Non-Reactive">Non-Reactive(-) ปกติ</option>
+                                <option value="Reactive">Reactive(+) ผิดปกติ</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>ซิฟิลิส Syphilis (VDRL)</label>
+                            <select id="vdrl" class="custom-select select-green-border disease-select">
+                                <option value="Non-Reactive">Non-Reactive(-) ปกติ</option>
+                                <option value="Reactive">Reactive(+) ผิดปกติ</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="submit-wrapper">
+                        <button type="button" id="submitBtn" class="btn-submit">บันทึกผล</button>
+                    </div>
+                </div>
+
+                <div id="msgBox" class="msg-box hidden"></div>
+
+                <!-- Success panel shown after save -->
+                <div id="successPanel" class="success-panel hidden">
+                    <div class="success-icon"><i class="fa-solid fa-circle-check"></i></div>
+                    <h2 id="successTitle">บันทึกผลการตรวจเรียบร้อยแล้ว</h2>
+                    <div id="successDetails" style="color:#4a5568; margin-top:8px;"></div>
+                    <div id="successStatus" class="success-status"></div>
+                    <p class="redirect-note">กำลังกลับไปยังคลังเลือด… <span id="countdown">3</span> วินาที</p>
+                    <button id="goNowBtn" class="btn-now" type="button">ไปเลย</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../api.js"></script>
+    <script src="shared-topbar-sidebar.js"></script>
+    <script src="blood-testing.js"></script>
+</body>
+</html>

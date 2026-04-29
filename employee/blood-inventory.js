@@ -22,6 +22,23 @@ function getBagStatusClass(status) {
   return 'ready';
 }
 
+// Client-side guard: catch any bag the backend scheduler hasn't swept yet.
+// Compares midnight-local of expiryDate against midnight-local of today,
+// matching the backend's  ExpiryDate < CURDATE()  logic exactly.
+function isClientExpired(bag) {
+  if (!bag.expiryDate) return false;
+  const expiry = new Date(bag.expiryDate + 'T00:00:00');
+  const today  = new Date();
+  today.setHours(0, 0, 0, 0);
+  return expiry < today;
+}
+
+// Mirrors backend: expired = past ExpiryDate AND not already used/discarded (2/3)
+function effectiveStatus(bag) {
+  if (bag.bagStatus !== 2 && bag.bagStatus !== 3 && isClientExpired(bag)) return 4;
+  return bag.bagStatus;
+}
+
 function renderBags() {
   const keyword = searchInput.value.trim().toLowerCase();
   const selectedBlood = bloodFilter.value;
@@ -29,12 +46,12 @@ function renderBags() {
   const selectedStatus = statusFilter.value;
 
   const filtered = allBags.filter(bag => {
+    const status = effectiveStatus(bag);
     const idStr = formatBagId(bag.bagId).toLowerCase();
-    const matchesSearch = !keyword || idStr.includes(keyword);
-    const matchesBlood = selectedBlood === 'all' || bag.bloodGroup === selectedBlood;
+    const matchesSearch    = !keyword || idStr.includes(keyword);
+    const matchesBlood     = selectedBlood === 'all' || bag.bloodGroup === selectedBlood;
     const matchesComponent = selectedComponent === 'all' || bag.componentType === selectedComponent;
-    const statusLabel = mapBagStatus(bag.bagStatus);
-    const matchesStatus = selectedStatus === 'all' || statusLabel === selectedStatus;
+    const matchesStatus    = selectedStatus === 'all' || mapBagStatus(status) === selectedStatus;
     return matchesSearch && matchesBlood && matchesComponent && matchesStatus;
   });
 
@@ -44,11 +61,13 @@ function renderBags() {
   }
 
   bagTableBody.innerHTML = filtered.map(bag => {
-    const displayId = formatBagId(bag.bagId);
-    const statusLabel = mapBagStatus(bag.bagStatus);
-    const statusClass = getBagStatusClass(bag.bagStatus);
+    const status      = effectiveStatus(bag);
+    const displayId   = formatBagId(bag.bagId);
+    const statusLabel = mapBagStatus(status);
+    const statusClass = getBagStatusClass(status);
+    const rowClass    = status === 4 ? ' class="row-expired"' : '';
     return `
-      <tr>
+      <tr${rowClass}>
         <td>
           <a class="bag-link" href="blood-bag-detail.html?id=${bag.bagId}">
             ${displayId.replace('-', '-<br>')}

@@ -8,6 +8,10 @@ async function loadStats() {
     document.getElementById('statBags').textContent      = stats.availableBags  ?? '—';
     document.getElementById('statExpiring').textContent  = stats.expiringSoon   ?? '—';
     document.getElementById('statDispensed').textContent = stats.dispensedToday ?? '—';
+    document.getElementById('statExpired').textContent   = stats.expiredBags    ?? '—';
+    if (stats.expiredBags > 0) {
+      document.getElementById('expiredCard').classList.add('expired-alert');
+    }
   } catch {
     // leave dashes
   }
@@ -22,15 +26,17 @@ async function loadBloodStock() {
       return;
     }
     tbody.innerHTML = rows.map(r => {
-      const count = r.count ?? 0;
+      const count = r.units ?? r.count ?? 0;
       let cls, label;
-      if (count === 0) { cls = 'critical'; label = 'ขาดแคลนด่วน'; }
+      if (count === 0)                       { cls = 'critical'; label = 'ขาดแคลนด่วน'; }
       else if (count < STOCK_THRESHOLD_LOW)  { cls = 'critical'; label = 'ขาดแคลนด่วน'; }
       else if (count < STOCK_THRESHOLD_WARN) { cls = 'watch';    label = 'เฝ้าระวัง'; }
       else                                   { cls = 'ok';       label = 'ปกติ'; }
-      const rh = r.rhFactor === '+' ? 'positive' : 'negative';
+      const bloodGroup = r.BloodGroup || r.bloodGroup || '—';
+      const rhRaw = r.RhFactor || r.rhFactor || '';
+      const rh = rhRaw === '+' ? 'Positive' : rhRaw === '-' ? 'Negative' : rhRaw;
       return `<tr>
-        <td>${r.bloodGroup} ${rh}</td>
+        <td>${bloodGroup} ${rh}</td>
         <td>${count}</td>
         <td><span class="stock-status ${cls}">${label}</span></td>
       </tr>`;

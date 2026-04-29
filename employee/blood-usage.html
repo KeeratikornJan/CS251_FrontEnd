@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบเบิกจ่ายเลือด | BloodBank Staff</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&family=Prompt:wght@300;400;500;600&family=Sarabun:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="shared-topbar-sidebar.css">
+    <link rel="stylesheet" href="shared-ui.css">
+    <style>
+        body { overflow-y: scroll; }
+        .app-layout { grid-template-columns: 240px 1fr !important; }
+        .page-title-header { font-size: 22px; font-weight: 600; color: var(--text); margin: 0 auto 24px auto; max-width: 500px; }
+        .usage-form-card { background: #fff; border-radius: 12px; padding: 30px; max-width: 500px; margin: 0 auto; box-shadow: 0 8px 24px rgba(0,0,0,0.06); font-family: 'Prompt', sans-serif; }
+        .search-area { margin-bottom: 24px; }
+        .search-area label { display: block; font-weight: 500; color: #333; margin-bottom: 8px; font-size: 15px; }
+        .search-flex { display: flex; gap: 12px; }
+        .search-input { flex: 1; height: 38px; border: 1px solid #dcdfe7; border-radius: 6px; padding: 0 12px; font-family: 'Prompt', sans-serif; font-size: 14px; outline: none; }
+        .search-input:focus { border-color: var(--brand); }
+        .search-input::placeholder { color: #a0aec0; }
+        .btn-search { background: var(--brand); color: #fff; border: none; border-radius: 6px; padding: 0 20px; font-weight: 500; font-family: 'Prompt', sans-serif; cursor: pointer; transition: opacity 0.2s; }
+        .btn-search:hover { opacity: 0.9; }
+        .btn-search:disabled { background: #cbd5e1; cursor: not-allowed; }
+        .patient-info { background: #eaf1fa; border-radius: 8px; padding: 16px 20px; margin-bottom: 24px; }
+        .patient-info.hidden { display: none; }
+        .info-row { display: flex; justify-content: space-between; align-items: flex-start; padding: 8px 0; border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .info-row:last-child { border-bottom: none; padding-bottom: 0; }
+        .info-label { color: var(--muted); font-size: 14px; }
+        .info-value { font-weight: 500; color: #333; font-size: 14px; text-align: right; }
+        .blood-need { color: #0b76e0; font-weight: 600; }
+        .section-title { font-weight: 500; color: #333; font-size: 15px; margin-bottom: 12px; }
+        .bag-list { background: #f4f5f8; border-radius: 8px; padding: 16px; display: flex; flex-direction: column; gap: 10px; }
+        .bag-item { display: flex; align-items: center; gap: 12px; padding: 10px 16px; background: #fff; border-radius: 6px; border: 2px solid #dcdfe7; cursor: pointer; transition: border-color 0.2s; }
+        .bag-item:hover { border-color: var(--brand); }
+        .bag-item.selected { border-color: var(--brand); background: #f0f1fa; }
+        .bag-item label { font-family: 'Outfit', sans-serif; color: var(--brand); font-size: 14px; cursor: pointer; }
+        .confirm-row { text-align: center; margin-top: 24px; }
+        .confirm-row.hidden { display: none; }
+        .btn-confirm { background: var(--brand); color: #fff; border: none; border-radius: 8px; padding: 10px 32px; font-size: 15px; font-weight: 500; font-family: 'Prompt', sans-serif; cursor: pointer; transition: opacity 0.2s; }
+        .btn-confirm:hover:not(:disabled) { opacity: 0.9; }
+        .btn-confirm:disabled { background: #cbd5e1; cursor: not-allowed; }
+        .msg-box { padding: 12px 20px; border-radius: 8px; margin: 16px 0; font-size: 14px; }
+        .msg-box.error { background: #fff5f5; border: 1px solid #feb2b2; color: #c53030; }
+        .msg-box.success { background: #f0fff4; border: 1px solid #9ae6b4; color: #276749; }
+        .msg-box.hidden { display: none; }
+        #bagsSection.hidden { display: none; }
+    </style>
+</head>
+<body data-active-menu="blood-transfer">
+    <div id="layoutRoot">
+        <div id="pageContent">
+            <h1 class="page-title-header">ระบบเบิกจ่ายเลือด</h1>
+
+            <div class="usage-form-card">
+                <!-- Patient search -->
+                <div class="search-area">
+                    <label>กรอกรหัสผู้ป่วย</label>
+                    <div class="search-flex">
+                        <input type="text" id="patientIdInput" class="search-input" placeholder="PAT-12345">
+                        <button id="searchBtn" class="btn-search" type="button">Search</button>
+                    </div>
+                </div>
+
+                <!-- Patient info -->
+                <div id="patientInfo" class="patient-info hidden">
+                    <div class="info-row">
+                        <span class="info-label">ชื่อผู้ป่วย :</span>
+                        <span class="info-value" id="patientName">—</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">ความต้องการเลือด :</span>
+                        <span class="info-value blood-need" id="bloodNeed">—</span>
+                    </div>
+                </div>
+
+                <!-- Matching bags -->
+                <div id="bagsSection" class="hidden">
+                    <div class="section-title">ถุงเลือดที่ Match</div>
+                    <div id="bagList" class="bag-list"></div>
+                </div>
+
+                <!-- Confirm button -->
+                <div id="confirmRow" class="confirm-row hidden">
+                    <button id="confirmBtn" class="btn-confirm" type="button">ยืนยันการจ่ายเลือด</button>
+                </div>
+
+                <div id="msgBox" class="msg-box hidden"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../api.js"></script>
+    <script src="shared-topbar-sidebar.js"></script>
+    <script src="blood-usage.js"></script>
+</body>
+</html>
