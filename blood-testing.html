@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Blood Testing | BloodBank Staff</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <link rel="stylesheet" href="shared-topbar-sidebar.css" />
+  <link rel="stylesheet" href="blood-testing.css" />
+  <link rel="stylesheet" href="shared-ui.css" />
+</head>
+<body data-active-menu="blood-test">
+  <div id="layoutRoot">
+    <main class="page-content" id="pageContent">
+      <section class="page-head">
+        <h1>บันทึกผลทางห้องปฏิบัติการ</h1>
+      </section>
+
+      <div class="form-wrap">
+        <!-- Step 1: Search donor -->
+        <div class="field-row">
+          <div class="field-group">
+            <label class="field-label">กรอกรหัสผู้บริจาค</label>
+            <div class="search-row">
+              <input id="donorIdInput" type="text" placeholder="DON-13579" />
+              <button id="searchBtn" class="primary-btn" type="button">ค้นหาข้อมูล</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Donor info card -->
+        <div id="donorCard" class="info-card hidden">
+          <div class="info-col bold" id="donorName">—</div>
+          <div class="info-col">
+            <span class="info-label">วันที่เก็บเลือด</span>
+            <span class="info-value" id="collectionDate">—</span>
+          </div>
+          <div class="info-col">
+            <span class="info-label">ประเภทกระบวนการ</span>
+            <span class="info-value" id="bloodComponent">—</span>
+          </div>
+          <div class="info-col">
+            <span class="info-label">หมู่เลือด</span>
+            <span class="info-value blood-group" id="bloodGroupDisplay">—</span>
+          </div>
+        </div>
+
+        <!-- Test form (hidden until bag found) -->
+        <div id="testForm" class="hidden">
+          <div class="section-title">Comfarmatory Test</div>
+          <div class="two-col">
+            <div class="field-group">
+              <label class="field-label">ABO Blood Group</label>
+              <select id="confirmatoryAbo">
+                <option value="A">A</option>
+                <option value="B">B</option>
+                <option value="AB">AB</option>
+                <option value="O">O</option>
+              </select>
+            </div>
+            <div class="field-group">
+              <label class="field-label">Rh Factor</label>
+              <select id="confirmatoryRh">
+                <option value="Positive">Positive (+)</option>
+                <option value="Negative">Negative (-)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="section-title">Infectious Diseases Results</div>
+          <div class="two-col">
+            <div class="field-group">
+              <label class="field-label">ไวรัสเอชไอวี (HIV)</label>
+              <select id="hiv" class="disease-select">
+                <option value="Non-Reactive">Non-Reactive(-) ปกติ</option>
+                <option value="Reactive">Reactive(+) ผิดปกติ</option>
+              </select>
+            </div>
+            <div class="field-group">
+              <label class="field-label">ไวรัสตับอักเสบบี (HBsAG)</label>
+              <select id="hbsag" class="disease-select">
+                <option value="Non-Reactive">Non-Reactive(-) ปกติ</option>
+                <option value="Reactive">Reactive(+) ผิดปกติ</option>
+              </select>
+            </div>
+            <div class="field-group">
+              <label class="field-label">ไวรัสตับอักเสบซี (HCV)</label>
+              <select id="hcv" class="disease-select">
+                <option value="Non-Reactive">Non-Reactive(-) ปกติ</option>
+                <option value="Reactive">Reactive(+) ผิดปกติ</option>
+              </select>
+            </div>
+            <div class="field-group">
+              <label class="field-label">ซิฟิลิส Syphilis (VDRL)</label>
+              <select id="vdrl" class="disease-select">
+                <option value="Non-Reactive">Non-Reactive(-) ปกติ</option>
+                <option value="Reactive">Reactive(+) ผิดปกติ</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="submit-row">
+            <button id="submitBtn" class="primary-btn large" type="button">บันทึกผล</button>
+          </div>
+        </div>
+
+        <div id="msgBox" class="msg-box hidden"></div>
+
+        <!-- Success panel shown after save -->
+        <div id="successPanel" class="success-panel hidden">
+          <div class="success-icon"><i class="fa-solid fa-circle-check"></i></div>
+          <h2 id="successTitle">บันทึกผลการตรวจเรียบร้อยแล้ว</h2>
+          <div class="success-details" id="successDetails"></div>
+          <div class="success-status" id="successStatus"></div>
+          <p class="redirect-note">กำลังกลับไปยังคลังเลือด… <span id="countdown">3</span> วินาที</p>
+          <button id="goNowBtn" class="primary-btn" type="button">ไปเลย</button>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="api.js"></script>
+  <script src="shared-topbar-sidebar.js"></script>
+  <script src="blood-testing.js"></script>
+</body>
+</html>

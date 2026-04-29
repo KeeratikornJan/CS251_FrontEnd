@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Blood Usage | BloodBank Staff</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <link rel="stylesheet" href="shared-topbar-sidebar.css" />
+  <link rel="stylesheet" href="blood-usage.css" />
+  <link rel="stylesheet" href="shared-ui.css" />
+</head>
+<body data-active-menu="blood-transfer">
+  <div id="layoutRoot">
+    <main class="page-content" id="pageContent">
+      <section class="page-head">
+        <h1>ระบบเบิกจ่ายเลือด</h1>
+      </section>
+
+      <div class="usage-wrap">
+        <div class="usage-card">
+          <!-- Patient search -->
+          <div class="field-group">
+            <label class="field-label">กรอกรหัสผู้ป่วย</label>
+            <div class="search-row">
+              <input id="patientIdInput" type="text" placeholder="PAT-12345" />
+              <button id="searchBtn" class="primary-btn" type="button">Search</button>
+            </div>
+          </div>
+
+          <!-- Patient info -->
+          <div id="patientInfo" class="patient-info hidden">
+            <div class="info-row">
+              <span class="info-label">ชื่อผู้ป่วย :</span>
+              <span class="info-value" id="patientName">—</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">ความต้องการเลือด :</span>
+              <span class="info-value blood-need" id="bloodNeed">—</span>
+            </div>
+          </div>
+
+          <!-- Matching bags -->
+          <div id="bagsSection" class="hidden">
+            <div class="section-title">ถุงเลือดที่ Match</div>
+            <div id="bagList" class="bag-list"></div>
+          </div>
+
+          <!-- Confirm button -->
+          <div id="confirmRow" class="confirm-row hidden">
+            <button id="confirmBtn" class="primary-btn large" type="button">ยืนยันการจ่ายเลือด</button>
+          </div>
+
+          <div id="msgBox" class="msg-box hidden"></div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="api.js"></script>
+  <script src="shared-topbar-sidebar.js"></script>
+  <script src="blood-usage.js"></script>
+</body>
+</html>

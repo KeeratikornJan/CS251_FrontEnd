@@ -56,11 +56,24 @@ function formatThaiDate(isoDate) {
   return `${day} ${months[month - 1]} ${year + 543}`;
 }
 
-// Redirect to login if not authenticated (skips on the login page itself)
+// Redirect to login if not authenticated; redirect donors away from employee pages
 (function () {
   const path = window.location.pathname;
-  const onLogin = path.endsWith('index.html') || path === '/' || path.endsWith('/');
+  const onLogin  = path.endsWith('index.html') || path === '/' || path.endsWith('/');
+  const onDonorPortal = path.endsWith('donor-portal.html');
+
   if (!onLogin && !getToken()) {
     window.location.replace('index.html');
+    return;
+  }
+
+  if (!onLogin && getToken()) {
+    const user = getAuthUser();
+    if (user && user.role === 'Donor' && !onDonorPortal) {
+      window.location.replace('donor-portal.html');
+    }
+    if (user && user.role === 'Employee' && onDonorPortal) {
+      window.location.replace('dashboard.html');
+    }
   }
 })();

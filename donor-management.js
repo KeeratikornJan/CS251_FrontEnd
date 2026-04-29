@@ -5,18 +5,110 @@ const donorTableBody = document.querySelector('#donorTableBody');
 
 let allDonors = [];
 
+// ── Edit modal ───────────────────────────────────────────────────────────────
+const editModal = document.createElement('dialog');
+editModal.id = 'donorEditModal';
+editModal.innerHTML = `
+  <form id="donorEditForm" style="min-width:380px;display:flex;flex-direction:column;gap:1rem">
+    <h3 style="margin:0 0 .5rem;color:#33364a">แก้ไขข้อมูลผู้บริจาค</h3>
+    <input type="hidden" name="donorId" />
+
+    <label style="display:flex;flex-direction:column;gap:.25rem;font-size:.875rem">
+      ชื่อ-นามสกุล <span style="color:#e22c34">*</span>
+      <input name="name" required placeholder="ชื่อ นามสกุล"
+        style="padding:.5rem .75rem;border:1px solid #d1d5db;border-radius:.5rem;font-family:inherit;font-size:.875rem" />
+    </label>
+
+    <label style="display:flex;flex-direction:column;gap:.25rem;font-size:.875rem">
+      วันเกิด
+      <input name="birthday" type="date"
+        style="padding:.5rem .75rem;border:1px solid #d1d5db;border-radius:.5rem;font-family:inherit;font-size:.875rem" />
+    </label>
+
+    <label style="display:flex;flex-direction:column;gap:.25rem;font-size:.875rem">
+      โรคประจำตัว
+      <input name="congenitalDisease" placeholder="ระบุโรคประจำตัว (ถ้ามี)"
+        style="padding:.5rem .75rem;border:1px solid #d1d5db;border-radius:.5rem;font-family:inherit;font-size:.875rem" />
+    </label>
+
+    <label style="display:flex;flex-direction:column;gap:.25rem;font-size:.875rem">
+      เบอร์โทรศัพท์
+      <input name="phone" type="tel" placeholder="0XX-XXX-XXXX"
+        style="padding:.5rem .75rem;border:1px solid #d1d5db;border-radius:.5rem;font-family:inherit;font-size:.875rem" />
+    </label>
+
+    <label style="display:flex;flex-direction:column;gap:.25rem;font-size:.875rem">
+      อีเมล
+      <input name="email" type="email" placeholder="example@email.com"
+        style="padding:.5rem .75rem;border:1px solid #d1d5db;border-radius:.5rem;font-family:inherit;font-size:.875rem" />
+    </label>
+
+    <div style="display:flex;gap:.75rem;justify-content:flex-end;margin-top:.5rem">
+      <button type="button" id="cancelDonorEdit"
+        style="padding:.5rem 1.25rem;border:1px solid #d1d5db;border-radius:.5rem;background:#fff;cursor:pointer;font-family:inherit">
+        ยกเลิก
+      </button>
+      <button type="submit" id="donorEditSubmit"
+        style="padding:.5rem 1.25rem;border:none;border-radius:.5rem;background:#3b4fa8;color:#fff;cursor:pointer;font-family:inherit">
+        บันทึก
+      </button>
+    </div>
+  </form>
+`;
+editModal.style.cssText = 'border:none;border-radius:12px;padding:1.5rem;box-shadow:0 8px 32px rgba(0,0,0,.15)';
+document.body.appendChild(editModal);
+
+document.getElementById('cancelDonorEdit').addEventListener('click', () => editModal.close());
+
+document.getElementById('donorEditForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const fd = new FormData(e.target);
+  const donorId = parseInt(fd.get('donorId'));
+  const btn = document.getElementById('donorEditSubmit');
+  btn.disabled = true;
+  btn.textContent = 'กำลังบันทึก...';
+
+  const body = {};
+  const name    = fd.get('name')?.trim();
+  const birthday = fd.get('birthday');
+  const disease  = fd.get('congenitalDisease')?.trim();
+  const phone    = fd.get('phone')?.trim();
+  const email    = fd.get('email')?.trim();
+
+  if (name)     body.name = name;
+  if (birthday) body.birthday = birthday;
+  if (disease)  body.congenitalDisease = disease;
+  if (phone)    body.phone = phone;
+  if (email)    body.email = email;
+
+  try {
+    await apiPut(`/api/donors/${donorId}`, body);
+    editModal.close();
+    await loadDonors();
+    alert('แก้ไขข้อมูลเรียบร้อยแล้ว');
+  } catch (err) {
+    alert(`เกิดข้อผิดพลาด: ${err.message}`);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'บันทึก';
+  }
+});
+
+// ── Helpers ──────────────────────────────────────────────────────────────────
 function formatDonorId(id) {
   return `DON-${String(id).padStart(5, '0')}`;
 }
 
+// Status: 1 = active (ปกติ), 0 = suspended (ระงับ)
 function mapStatus(status) {
-  return status === 1 ? 'ระงับ' : 'ปกติ';
+  return status === 0 ? 'ระงับ' : 'ปกติ';
 }
 
 function getStatusClass(status) {
-  return status === 1 ? 'suspended' : 'normal';
+  return status === 0 ? 'suspended' : 'normal';
 }
 
+// ── Render ────────────────────────────────────────────────────────────────────
 function renderDonors() {
   const keyword = searchInput.value.trim().toLowerCase();
   const selectedBlood = bloodFilter.value;
@@ -39,8 +131,8 @@ function renderDonors() {
   }
 
   donorTableBody.innerHTML = filtered.map(donor => {
-    const isSuspended = donor.status === 1;
-    const statusText = isSuspended ? 'ระงับ (มีอาการไว)' : 'ปกติ';
+    const isSuspended = donor.status === 0;
+    const statusText  = isSuspended ? 'ระงับ (มีอาการไว)' : 'ปกติ';
     const statusClass = getStatusClass(donor.status);
     return `
       <tr>
@@ -74,10 +166,11 @@ function renderDonors() {
   });
 
   donorTableBody.querySelectorAll('[data-edit]').forEach(btn => {
-    btn.addEventListener('click', () => handleEdit(parseInt(btn.dataset.edit)));
+    btn.addEventListener('click', () => openEditModal(parseInt(btn.dataset.edit)));
   });
 }
 
+// ── Suspend / Reinstate ───────────────────────────────────────────────────────
 async function handleToggle(donorId, isSuspended) {
   const action = isSuspended ? 'ยกเลิกระงับสิทธิ์' : 'ระงับสิทธิ์';
   const remark = prompt(`กรุณาระบุเหตุผลในการ${action}:`);
@@ -94,29 +187,32 @@ async function handleToggle(donorId, isSuspended) {
   }
 }
 
-async function handleEdit(donorId) {
-  const donor = allDonors.find(d => d.donorId === donorId);
-  if (!donor) return;
+// ── Open edit modal (fetch full profile first) ────────────────────────────────
+async function openEditModal(donorId) {
+  const form = document.getElementById('donorEditForm');
+  form.querySelector('[name=donorId]').value    = donorId;
+  form.querySelector('[name=name]').value         = '';
+  form.querySelector('[name=birthday]').value     = '';
+  form.querySelector('[name=congenitalDisease]').value = '';
+  form.querySelector('[name=phone]').value        = '';
+  form.querySelector('[name=email]').value        = '';
 
-  const name = prompt('ชื่อ-นามสกุลใหม่:', donor.name);
-  if (name === null || !name.trim()) return;
-
-  const phone = prompt('เบอร์โทรศัพท์ใหม่ (เว้นว่างเพื่อคงเดิม):', '') || undefined;
-  const email = prompt('อีเมลใหม่ (เว้นว่างเพื่อคงเดิม):', '') || undefined;
-
-  const body = { name: name.trim() };
-  if (phone) body.phone = phone;
-  if (email) body.email = email;
+  editModal.showModal();
 
   try {
-    await apiPut(`/api/donors/${donorId}`, body);
-    await loadDonors();
-    alert('แก้ไขข้อมูลเรียบร้อยแล้ว');
+    const p = await apiGet(`/api/donors/${donorId}/profile`);
+    form.querySelector('[name=name]').value         = p.name             || '';
+    form.querySelector('[name=birthday]').value     = p.birthday         || '';
+    form.querySelector('[name=congenitalDisease]').value = p.congenitalDisease || '';
+    form.querySelector('[name=phone]').value        = p.phone            || '';
+    form.querySelector('[name=email]').value        = p.email            || '';
   } catch (err) {
-    alert(`เกิดข้อผิดพลาด: ${err.message}`);
+    editModal.close();
+    alert(`ไม่สามารถโหลดข้อมูล: ${err.message}`);
   }
 }
 
+// ── Load ──────────────────────────────────────────────────────────────────────
 function setTableState(html) {
   donorTableBody.innerHTML = html;
 }

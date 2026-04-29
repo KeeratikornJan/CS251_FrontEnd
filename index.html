@@ -122,14 +122,27 @@
         เข้าสู่ระบบ
       </button>
     </form>
+
+    <p style="text-align:center;margin-top:1.25rem;font-size:.875rem;color:#64748b">
+      ยังไม่มีบัญชี?
+      <a href="register.html" style="color:#3b4fa8;font-weight:600;text-decoration:none">สมัครสมาชิก</a>
+    </p>
   </div>
 
   <script>
     const API_BASE = 'http://localhost:8080';
 
-    if (localStorage.getItem('auth_token')) {
-      window.location.replace('donor-management.html');
-    }
+    (function () {
+      const token = localStorage.getItem('auth_token');
+      if (token) {
+        try {
+          const user = JSON.parse(localStorage.getItem('auth_user') || 'null');
+          window.location.replace(user && user.role === 'Donor' ? 'donor-portal.html' : 'dashboard.html');
+        } catch {
+          window.location.replace('dashboard.html');
+        }
+      }
+    })();
 
     const form      = document.getElementById('loginForm');
     const errorMsg  = document.getElementById('errorMsg');
@@ -162,7 +175,8 @@
         const data = json.data;
         localStorage.setItem('auth_token', data.accessToken);
         localStorage.setItem('auth_user', JSON.stringify(data.user));
-        window.location.replace('donor-management.html');
+        const dest = data.user && data.user.role === 'Donor' ? 'donor-portal.html' : 'dashboard.html';
+        window.location.replace(dest);
       } catch (err) {
         const isCorsOrNetwork = err instanceof TypeError && err.message === 'Failed to fetch';
         showError(isCorsOrNetwork

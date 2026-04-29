@@ -154,6 +154,12 @@ tbody tr:last-child td {
   color: #ef3030;
 }
 
+.status.expired {
+  background: #f3f4f6;
+  border-color: #d1d5db;
+  color: #6b7280;
+}
+
 .detail-btn {
   width: 34px;
   height: 34px;

@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>พอร์ทัลผู้บริจาค | BloodBank</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --brand: #2f3192;
+      --brand-soft: #e9edff;
+      --danger: #ef3b3b;
+      --ok: #168a35;
+      --text: #484848;
+      --muted: #737782;
+      --line: #dcdfe7;
+    }
+
+    body {
+      font-family: 'Sarabun', sans-serif;
+      background: #f3f4f8;
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* ── Topbar ─────────────────────────────────────────────────── */
+    .topbar {
+      height: 64px;
+      background: #fff;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 32px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--brand);
+      font-weight: 700;
+      font-size: 1.1rem;
+    }
+
+    .brand i { font-size: 1.5rem; }
+
+    .user-area {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .user-name { font-weight: 600; font-size: 0.95rem; }
+    .user-id   { font-size: 0.8rem; color: var(--muted); }
+
+    .logout-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 0.875rem;
+      color: var(--text);
+      transition: background 0.15s;
+    }
+
+    .logout-btn:hover { background: #f3f4f8; }
+
+    /* ── Page layout ─────────────────────────────────────────────── */
+    .page {
+      max-width: 960px;
+      margin: 32px auto;
+      padding: 0 24px 80px;
+    }
+
+    .page-title {
+      font-size: 1.6rem;
+      font-weight: 700;
+      margin-bottom: 24px;
+    }
+
+    /* ── Cards ────────────────────────────────────────────────────── */
+    .card {
+      background: #fff;
+      border-radius: 14px;
+      box-shadow: 0 2px 10px rgba(0,0,0,.06);
+      padding: 24px 28px;
+      margin-bottom: 20px;
+    }
+
+    .card-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--brand);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* ── Stats row ───────────────────────────────────────────────── */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .stat-card {
+      background: #fff;
+      border-radius: 14px;
+      box-shadow: 0 2px 10px rgba(0,0,0,.06);
+      padding: 20px 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .stat-label { font-size: 0.8rem; color: var(--muted); }
+    .stat-value { font-size: 1.6rem; font-weight: 700; color: var(--brand); }
+    .stat-sub   { font-size: 0.8rem; color: var(--muted); }
+
+    /* ── Profile grid ────────────────────────────────────────────── */
+    .profile-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px 28px;
+    }
+
+    .profile-row { display: flex; flex-direction: column; gap: 2px; }
+    .profile-label { font-size: 0.75rem; color: var(--muted); }
+    .profile-value { font-size: 0.95rem; font-weight: 500; }
+
+    /* ── Eligibility badge ───────────────────────────────────────── */
+    .eligibility-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 18px;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      margin-top: 6px;
+    }
+
+    .eligibility-badge.ready {
+      background: #f1fff4;
+      border: 1px solid #b7eac1;
+      color: var(--ok);
+    }
+
+    .eligibility-badge.not-ready {
+      background: #fffbea;
+      border: 1px solid #f2d46b;
+      color: #b67d09;
+    }
+
+    .eligibility-badge.suspended {
+      background: #fff4f4;
+      border: 1px solid #ffbfc4;
+      color: var(--danger);
+    }
+
+    /* ── Table ───────────────────────────────────────────────────── */
+    .table-wrap { overflow-x: auto; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+
+    thead th {
+      padding: 10px 14px;
+      text-align: left;
+      font-weight: 600;
+      color: var(--muted);
+      border-bottom: 2px solid var(--line);
+      white-space: nowrap;
+    }
+
+    tbody td {
+      padding: 12px 14px;
+      border-bottom: 1px solid #f0f1f5;
+    }
+
+    tbody tr:last-child td { border-bottom: none; }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 10px;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .badge.pass   { background: #f1fff4; border: 1px solid #b7eac1; color: var(--ok); }
+    .badge.fail   { background: #fff4f4; border: 1px solid #ffbfc4; color: var(--danger); }
+
+    .empty-state {
+      text-align: center;
+      color: var(--muted);
+      padding: 32px;
+    }
+
+    /* ── Loading ─────────────────────────────────────────────────── */
+    .loading { text-align: center; color: var(--muted); padding: 20px; }
+  </style>
+</head>
+<body>
+
+  <header class="topbar">
+    <div class="brand">
+      <i class="fa-solid fa-heart-pulse"></i>
+      <span>BloodBank — ผู้บริจาค</span>
+    </div>
+    <div class="user-area">
+      <div>
+        <div class="user-name" id="topbarName">กำลังโหลด...</div>
+        <div class="user-id"  id="topbarId"></div>
+      </div>
+      <button class="logout-btn" id="logoutBtn">
+        <i class="fa-solid fa-arrow-right-from-bracket"></i>
+        ออกจากระบบ
+      </button>
+    </div>
+  </header>
+
+  <div class="page">
+    <h1 class="page-title">ยินดีต้อนรับ, <span id="welcomeName">ผู้บริจาค</span></h1>
+
+    <!-- Stats row -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <span class="stat-label">จำนวนครั้งที่บริจาคทั้งหมด</span>
+        <span class="stat-value" id="totalDonations">—</span>
+        <span class="stat-sub">ครั้ง</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">บริจาคล่าสุด</span>
+        <span class="stat-value" id="lastDonation" style="font-size:1.15rem">—</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">บริจาคได้ครั้งถัดไป</span>
+        <span class="stat-value" id="nextEligible" style="font-size:1.15rem">—</span>
+      </div>
+    </div>
+
+    <!-- Eligibility -->
+    <div class="card" id="eligibilityCard">
+      <div class="card-title"><i class="fa-solid fa-circle-check"></i> สถานะการบริจาค</div>
+      <div id="eligibilityBadge" class="loading"><i class="fa-solid fa-spinner fa-spin"></i> กำลังโหลด...</div>
+    </div>
+
+    <!-- Profile -->
+    <div class="card">
+      <div class="card-title"><i class="fa-solid fa-user"></i> ข้อมูลส่วนตัว</div>
+      <div class="profile-grid" id="profileGrid">
+        <div class="loading"><i class="fa-solid fa-spinner fa-spin"></i> กำลังโหลด...</div>
+      </div>
+    </div>
+
+    <!-- Donation history -->
+    <div class="card">
+      <div class="card-title"><i class="fa-solid fa-clock-rotate-left"></i> ประวัติการบริจาค</div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>วันที่บริจาค</th>
+              <th>ประเภท</th>
+              <th>ปริมาณ (มล.)</th>
+              <th>ผลคัดกรอง</th>
+            </tr>
+          </thead>
+          <tbody id="historyBody">
+            <tr><td class="empty-state" colspan="4"><i class="fa-solid fa-spinner fa-spin"></i> กำลังโหลด...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script src="api.js"></script>
+  <script src="donor-portal.js"></script>
+</body>
+</html>

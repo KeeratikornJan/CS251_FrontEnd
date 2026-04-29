@@ -11,13 +11,14 @@ function formatBagId(id) {
 }
 
 function mapBagStatus(status) {
-  const map = { 0: 'พร้อมใช้งาน', 1: 'ถูกจอง', 2: 'ใช้แล้ว', 3: 'รอทำลาย' };
+  const map = { 0: 'พร้อมใช้งาน', 1: 'รอผลตรวจ', 2: 'ใช้แล้ว', 3: 'รอทำลาย', 4: 'หมดอายุ' };
   return map[status] ?? 'ไม่ทราบสถานะ';
 }
 
 function getBagStatusClass(status) {
   if (status === 1) return 'reserved';
-  if (status === 3 || status === 2) return 'discard';
+  if (status === 2 || status === 3) return 'discard';
+  if (status === 4) return 'expired';
   return 'ready';
 }
 

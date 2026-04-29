@@ -184,8 +184,9 @@ function openEditModal(patientId) {
   const form = document.getElementById('patientEditForm');
   form.querySelector('[name=patientId]').value = patientId;
   form.querySelector('[name=name]').value = patient.name || '';
-  form.querySelector('[name=nationalId]').value = '';
-  form.querySelector('[name=birthday]').value = '';
+  form.querySelector('[name=nationalId]').value = patient.nationalId || '';
+  form.querySelector('[name=birthday]').value = patient.birthday || '';
+  form.querySelector('[name=gender]').value = patient.gender || 'M';
   form.querySelector('[name=bloodGroup]').value = patient.bloodGroup || 'A';
   form.querySelector('[name=rhFactor]').value = patient.rhFactor || '+';
   form.querySelector('[name=transfusionStatus]').value = patient.transfusionStatus || '';

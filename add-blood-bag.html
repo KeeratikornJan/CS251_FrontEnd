@@ -54,11 +54,6 @@
 
           <div class="form-grid">
             <label class="field">
-              <span>รหัสถุงเลือด (Bag ID)</span>
-              <input class="red-placeholder" name="bagId" placeholder="BAG-XXXXX" required />
-            </label>
-
-            <label class="field">
               <span>ประเภทส่วนประกอบ</span>
               <select name="component" required>
                 <option value="">--เลือกส่วนประกอบ แยก--</option>
@@ -69,10 +64,10 @@
               </select>
             </label>
 
-            <label class="field">
-              <span>วันที่ถ่ายเติม</span>
-              <input name="receivedDate" type="date" required />
-            </label>
+            <div class="field">
+              <span>วันที่ถ่ายเติม (วันนี้)</span>
+              <div class="today-display" id="todayDisplay">—</div>
+            </div>
 
             <label class="field">
               <span>วันหมดอายุ</span>

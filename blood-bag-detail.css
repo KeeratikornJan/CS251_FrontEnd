@@ -96,6 +96,12 @@ h2 {
   color: #ef3030;
 }
 
+.status.expired {
+  background: #f3f4f6;
+  border-color: #d1d5db;
+  color: #6b7280;
+}
+
 h3 {
   margin: 22px 0 18px;
   color: var(--brand);

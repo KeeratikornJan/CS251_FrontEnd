@@ -3,14 +3,14 @@ const activeMenu = document.body.dataset.activeMenu || 'donors';
 const pageContent = document.querySelector('#pageContent')?.innerHTML || '';
 
 const menuItems = [
-  { key: 'dashboard', label: 'Dashboard', href: '#', icon: 'fa-table-cells-large' },
-  { key: 'donors', label: 'ผู้บริจาค', href: 'donor-management.html', icon: 'fa-users' },
-  { key: 'patients', label: 'ผู้ป่วย', href: 'patient-management.html', icon: 'fa-bed' },
-  { key: 'blood-stock', label: 'คลังเลือด', href: 'blood-inventory.html', icon: 'fa-prescription-bottle-medical' },
-  { key: 'blood-test', label: 'บันทึกการตรวจเลือด', href: '#', icon: 'fa-vial' },
-  { key: 'blood-transfer', label: 'การจ่ายเลือด', href: '#', icon: 'fa-briefcase-medical' },
-  { key: 'notification', label: 'แจ้งเตือน', href: '#', icon: 'fa-bell', regular: true },
-  { key: 'report', label: 'รายงาน', href: '#', icon: 'fa-chart-bar', regular: true }
+  { key: 'dashboard',      label: 'Dashboard',            href: 'dashboard.html',      icon: 'fa-table-cells-large' },
+  { key: 'donors',         label: 'ผู้บริจาค',             href: 'donor-management.html', icon: 'fa-users' },
+  { key: 'patients',       label: 'ผู้ป่วย',               href: 'patient-management.html', icon: 'fa-bed' },
+  { key: 'blood-stock',    label: 'คลังเลือด',             href: 'blood-inventory.html', icon: 'fa-prescription-bottle-medical' },
+  { key: 'blood-test',     label: 'บันทึกการตรวจเลือด',   href: 'blood-testing.html',  icon: 'fa-vial' },
+  { key: 'blood-transfer', label: 'การจ่ายเลือด',          href: 'blood-usage.html',    icon: 'fa-briefcase-medical' },
+  { key: 'notification',   label: 'แจ้งเตือน',             href: 'alerts.html',         icon: 'fa-bell',     regular: true },
+  { key: 'report',         label: 'รายงาน',                href: 'reports.html',        icon: 'fa-chart-bar', regular: true }
 ];
 
 function getAuthUser() {
@@ -26,8 +26,8 @@ function createMenu() {
 }
 
 const user = getAuthUser();
-const displayName = user?.fullName ? `คุณ${user.fullName}` : 'คุณโอริส สุวรรณ์';
-const employeeNum = user?.id ? String(user.id).padStart(5, '0') : '12345';
+const displayName = user?.fullName ? `คุณ${user.fullName}` : (user?.username ? user.username : 'ผู้ใช้งาน');
+const employeeNum = user?.id ? String(user.id).padStart(5, '0') : '00000';
 const displayId = `บุคลากรเลขที่ EMP-${employeeNum}`;
 
 layoutRoot.innerHTML = `

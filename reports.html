@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reports | BloodBank Staff</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <link rel="stylesheet" href="shared-topbar-sidebar.css" />
+  <link rel="stylesheet" href="reports.css" />
+  <link rel="stylesheet" href="shared-ui.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+</head>
+<body data-active-menu="report">
+  <div id="layoutRoot">
+    <main class="page-content" id="pageContent">
+      <section class="page-head">
+        <h1>รายงานสรุปผลการดำเนินงาน</h1>
+      </section>
+
+      <!-- Filter bar -->
+      <div class="filter-bar">
+        <span class="filter-label">สรุปสถิติประจำเดือน</span>
+        <span class="filter-sep">เดือน</span>
+        <select id="monthSel">
+          <option value="1">มกราคม</option>
+          <option value="2">กุมภาพันธ์</option>
+          <option value="3">มีนาคม</option>
+          <option value="4">เมษายน</option>
+          <option value="5">พฤษภาคม</option>
+          <option value="6">มิถุนายน</option>
+          <option value="7">กรกฎาคม</option>
+          <option value="8">สิงหาคม</option>
+          <option value="9">กันยายน</option>
+          <option value="10">ตุลาคม</option>
+          <option value="11">พฤศจิกายน</option>
+          <option value="12">ธันวาคม</option>
+        </select>
+        <span class="filter-sep">ปี</span>
+        <select id="yearSel"></select>
+        <button id="refreshBtn" class="refresh-btn" type="button">
+          <i class="fa-solid fa-rotate-right"></i> Retrieve
+        </button>
+      </div>
+
+      <div class="report-body">
+        <!-- Summary cards -->
+        <div class="report-section">
+          <h2 class="section-heading">ยอดสถิติประจำ <span id="monthYearLabel">—</span></h2>
+          <div class="summary-cards">
+            <div class="summary-card red">
+              <i class="fa-solid fa-droplet"></i>
+              <div class="summary-num" id="totalIn">—</div>
+              <div class="summary-desc">ยอดรวมเลือดรับเข้า (ยูนิต)</div>
+            </div>
+            <div class="summary-card blue">
+              <i class="fa-solid fa-syringe"></i>
+              <div class="summary-num" id="totalUsed">—</div>
+              <div class="summary-desc">ยอดรวมเลือดที่ใช้แล้ว (ยูนิต)</div>
+            </div>
+            <div class="summary-card teal">
+              <i class="fa-solid fa-trash-can"></i>
+              <div class="summary-num" id="totalLost">—</div>
+              <div class="summary-desc">ปริมาณที่สูญเสีย / ทำลาย (ยูนิต)</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Donation table -->
+        <div class="report-section">
+          <h2 class="section-heading">ตารางรายงานการบริจาค</h2>
+          <div class="table-card">
+            <table>
+              <thead>
+                <tr>
+                  <th>วันที่</th>
+                  <th>กรุ๊ปเลือด</th>
+                  <th>จำนวนผู้บริจาค</th>
+                  <th>ปริมาณเลือดที่ได้รับ (ยูนิต)</th>
+                  <th>สถานะ</th>
+                </tr>
+              </thead>
+              <tbody id="donationTableBody">
+                <tr><td class="empty-state" colspan="5">กำลังโหลด...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Chart -->
+        <div class="report-section">
+          <h2 class="section-heading">กราฟเปรียบเทียบเลือดรับเข้า vs จ่ายออก</h2>
+          <div class="chart-card">
+            <canvas id="bloodChart" height="100"></canvas>
+          </div>
+        </div>
+
+        <!-- Blood group summary -->
+        <div class="report-section">
+          <h2 class="section-heading">ตารางสรุปหมวด</h2>
+          <div class="table-card">
+            <table>
+              <thead>
+                <tr>
+                  <th>กรุ๊ปเลือด</th>
+                  <th>รับเข้า (ยูนิต)</th>
+                  <th>จ่ายออก (ยูนิต)</th>
+                  <th>คงเหลืองมอบสุทธิ</th>
+                </tr>
+              </thead>
+              <tbody id="summaryTableBody">
+                <tr><td class="empty-state" colspan="4">กำลังโหลด...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="api.js"></script>
+  <script src="shared-topbar-sidebar.js"></script>
+  <script src="reports.js"></script>
+</body>
+</html>

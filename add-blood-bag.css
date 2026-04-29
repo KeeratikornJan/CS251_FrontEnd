@@ -136,6 +136,28 @@ input::placeholder {
   row-gap: 18px;
 }
 
+.today-display {
+  min-height: 48px;
+  border: 1px solid #ccd0dc;
+  border-radius: 10px;
+  background: #f5f6fa;
+  color: var(--brand);
+  font-size: 16px;
+  font-weight: 700;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.today-display::before {
+  content: '\f073';
+  font-family: 'Font Awesome 6 Free';
+  font-weight: 900;
+  font-size: 14px;
+  color: #888;
+}
+
 .submit-btn {
   width: 270px;
   height: 58px;
