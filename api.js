@@ -29,6 +29,12 @@ async function apiRequest(method, path, body = null) {
   } catch {
     throw new Error('ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้ กรุณาตรวจสอบการเชื่อมต่อ');
   }
+  if (res.status === 401) {
+    localStorage.removeItem('auth_token');
+    localStorage.removeItem('auth_user');
+    window.location.replace('index.html');
+    return;
+  }
   const json = await res.json();
   if (!res.ok || !json.success) {
     throw new Error(json.message || `HTTP ${res.status}`);
@@ -49,3 +55,12 @@ function formatThaiDate(isoDate) {
   const months = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
   return `${day} ${months[month - 1]} ${year + 543}`;
 }
+
+// Redirect to login if not authenticated (skips on the login page itself)
+(function () {
+  const path = window.location.pathname;
+  const onLogin = path.endsWith('index.html') || path === '/' || path.endsWith('/');
+  if (!onLogin && !getToken()) {
+    window.location.replace('index.html');
+  }
+})();
