@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Blood Bag Detail | BloodBank Staff</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <link rel="stylesheet" href="shared-topbar-sidebar.css" />
+  <link rel="stylesheet" href="blood-bag-detail.css" />
+  <link rel="stylesheet" href="shared-ui.css" />
+</head>
+<body data-active-menu="blood-stock">
+  <div id="layoutRoot">
+    <main class="page-content" id="pageContent">
+      <div class="title-row">
+        <a class="back-link" href="blood-inventory.html" aria-label="กลับไปหน้าคลังถุงเลือด">
+          <i class="fa-solid fa-arrow-left"></i>
+        </a>
+        <h1>รายละเอียดถุงเลือด</h1>
+      </div>
+
+      <section class="detail-layout">
+        <article class="detail-card">
+          <div class="detail-head">
+            <div>
+              <h2 id="bagId">BAG-A23001</h2>
+              <p><i class="fa-solid fa-link"></i> อ้างอิงจาก <span id="donationId">DON-12347</span></p>
+            </div>
+            <span class="status ready" id="bagStatus">พร้อมใช้งาน</span>
+          </div>
+
+          <h3>ข้อมูลส่วนประกอบเลือด</h3>
+          <div class="info-grid">
+            <div class="info-box">
+              <span>ส่วนประกอบ (Component Type)</span>
+              <strong id="component">Packed Red Cell (PRC)</strong>
+            </div>
+            <div class="info-box">
+              <span>หมู่เลือด (Blood Group / Rh factor)</span>
+              <strong class="danger-text" id="bloodGroup">O / Positive (+)</strong>
+            </div>
+            <div class="info-box">
+              <span>วันที่รับเข้า (Collection Date)</span>
+              <strong id="receivedDate">15 ม.ค. 2569</strong>
+            </div>
+            <div class="info-box warning">
+              <span>วันหมดอายุ (Expiry Date)</span>
+              <strong id="expiryDate">19 ก.พ. 2569</strong>
+            </div>
+          </div>
+        </article>
+
+        <aside class="manage-card">
+          <h3>จัดการสถานะถุงเลือด</h3>
+          <button class="manage-btn match" type="button">
+            <i class="fa-solid fa-code-branch"></i>
+            จับคู่ถ่ายเลือด (Matching / Isue)
+          </button>
+          <button class="manage-btn reserve" type="button">
+            <i class="fa-solid fa-lock"></i>
+            จองสำหรับผู้ป่วย (Reserve)
+          </button>
+
+          <div class="discard-box">
+            <strong><i class="fa-solid fa-triangle-exclamation"></i> คัดทิ้ง / ทำลายเลือด (Discard)</strong>
+            <p>การกระทำนี้ไม่สามารถย้อนกลับได้</p>
+            <button id="discardBtn" type="button">
+              <i class="fa-solid fa-trash-can"></i>
+              ยืนยันการทำลายถุงเลือด
+            </button>
+          </div>
+        </aside>
+      </section>
+    </main>
+  </div>
+
+  <script src="../api.js"></script>
+  <script src="shared-topbar-sidebar.js"></script>
+  <script src="blood-bag-detail.js"></script>
+</body>
+</html>

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Login | Blood Bank</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="employee-login.css">
+</head>
+<body class="donor-portal">
+    <div class="background-animation"></div>
+
+    <main class="container" style="max-width: 500px; display: flex; justify-content: center; align-items: center; min-height: 100vh;">
+        <div class="stat-card donor-login-card" style="width: 100%; text-align: center;">
+            <div class="donor-login-logo">
+                <i class="fa-solid fa-user-doctor"></i>
+            </div>
+            <h1 style="font-size: 2.2rem; margin-bottom: 0.5rem; font-family: 'Outfit'; font-weight: 700; color: #4a5568;">Employee<span style="color: var(--primary);">Login</span></h1>
+            <p style="margin-bottom: 2.5rem; color: #718096; font-size: 1.1rem;">เข้าสู่ระบบจัดการสำหรับเจ้าหน้าที่ธนาคารเลือด</p>
+
+            <div id="alertMsg" class="alert alert-error" style="display:none; margin-bottom:1.5rem;"></div>
+
+            <form id="loginForm" style="text-align: left;">
+                <div class="form-group" style="margin-bottom: 1.5rem;">
+                    <label class="form-label" style="color: #4a5568;">Username</label>
+                    <input type="text" id="username" class="form-control" placeholder="กรอก Username" style="border-radius: 12px; padding: 1.2rem;" required autocomplete="username">
+                </div>
+                <div class="form-group" style="margin-bottom: 2.5rem;">
+                    <label class="form-label" style="color: #4a5568;">Password</label>
+                    <input type="password" id="password" class="form-control" placeholder="............." style="border-radius: 12px; padding: 1.2rem;" required autocomplete="current-password">
+                </div>
+
+                <button type="submit" id="submitBtn" class="btn btn-donor" style="width: 100%; max-width: 100%; background: var(--primary); color: white; border: none; padding: 1.2rem; border-radius: 16px; box-shadow: 0 8px 20px rgba(34, 81, 199, 0.3);">
+                    <span style="font-size: 1.75rem; font-weight: 700;">Login</span>
+                </button>
+
+                <div style="text-align: center; margin-top: 1.5rem;">
+                    <a href="../index.html" style="color: #718096; font-size: 1rem; text-decoration: none;">
+                        <i class="fa-solid fa-arrow-left" style="margin-right: 6px;"></i> กลับหน้าหลัก
+                    </a>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <script>
+        const API_BASE = 'http://localhost:8080';
+
+        // Redirect already-logged-in users
+        (function () {
+            const token = localStorage.getItem('auth_token');
+            if (token) {
+                try {
+                    const user = JSON.parse(localStorage.getItem('auth_user') || 'null');
+                    if (user && user.role === 'Donor') {
+                        window.location.replace('../donor/donor-portal.html');
+                    } else {
+                        window.location.replace('dashboard.html');
+                    }
+                } catch {
+                    window.location.replace('dashboard.html');
+                }
+            }
+        })();
+
+        const form      = document.getElementById('loginForm');
+        const alertMsg  = document.getElementById('alertMsg');
+        const submitBtn = document.getElementById('submitBtn');
+
+        function showError(msg) {
+            alertMsg.textContent = msg;
+            alertMsg.classList.add('alert-error');
+            alertMsg.style.display = 'block';
+        }
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            alertMsg.style.display = 'none';
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span style="font-size:1.3rem;font-weight:700;"><i class="fa-solid fa-spinner fa-spin"></i> กำลังเข้าสู่ระบบ...</span>';
+
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
+
+            try {
+                const res = await fetch(`${API_BASE}/api/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+                const json = await res.json();
+                if (!res.ok || !json.success) {
+                    throw new Error(json.message || 'เข้าสู่ระบบไม่สำเร็จ');
+                }
+                const data = json.data;
+                localStorage.setItem('auth_token', data.accessToken);
+                localStorage.setItem('auth_user', JSON.stringify(data.user));
+                const dest = data.user && data.user.role === 'Donor' ? '../donor/donor-portal.html' : 'dashboard.html';
+                window.location.replace(dest);
+            } catch (err) {
+                const isCorsOrNetwork = err instanceof TypeError && err.message === 'Failed to fetch';
+                showError(isCorsOrNetwork
+                    ? 'ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้ กรุณาตรวจสอบว่า Backend กำลังทำงานอยู่'
+                    : (err.message || 'เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง'));
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<span style="font-size:1.75rem;font-weight:700;">Login</span>';
+            }
+        });
+    </script>
+</body>
+</html>

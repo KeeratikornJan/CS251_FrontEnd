@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Add Donor | BloodBank Staff</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <link rel="stylesheet" href="shared-topbar-sidebar.css" />
+  <link rel="stylesheet" href="add-donor.css" />
+  <link rel="stylesheet" href="shared-ui.css" />
+</head>
+<body data-active-menu="donors">
+  <div id="layoutRoot">
+    <main class="page-content" id="pageContent">
+      <div class="title-row">
+        <a class="back-link" href="donor-management.html" aria-label="กลับไปหน้าจัดการผู้บริจาค">
+          <i class="fa-solid fa-arrow-left"></i>
+        </a>
+        <h1>เพิ่มผู้บริจาคใหม่</h1>
+      </div>
+
+      <form id="donorForm" class="form-card">
+        <section class="form-section">
+          <h2>ข้อมูลส่วนตัว</h2>
+
+          <div class="form-grid">
+            <label class="field">
+              <span>เลขบัตรประชาชน (13 หลัก)</span>
+              <input name="citizenId" placeholder="x-xxxx-xxxxx-xx-x" required />
+            </label>
+
+            <label class="field">
+              <span>ชื่อ - นามสกุล</span>
+              <input name="fullName" placeholder="ชื่อ นามสกุล" required />
+            </label>
+
+            <label class="field">
+              <span>เพศ</span>
+              <select name="gender" required>
+                <option value="">--เลือกเพศ--</option>
+                <option value="ชาย">ชาย</option>
+                <option value="หญิง">หญิง</option>
+                <option value="ไม่ระบุ">ไม่ระบุ</option>
+              </select>
+            </label>
+
+            <label class="field">
+              <span>วันเกิด</span>
+              <input name="birthDate" type="date" required />
+            </label>
+
+            <label class="field">
+              <span>เบอร์โทรศัพท์</span>
+              <input name="phone" placeholder="08X-XXX-XXXX" required />
+            </label>
+
+            <label class="field">
+              <span>Username</span>
+              <input name="username" placeholder="XXXXXXXXXX" required />
+            </label>
+          </div>
+
+          <label class="field wide">
+            <span>อีเมล</span>
+            <input name="email" type="email" placeholder="example@email.com" />
+          </label>
+
+          <label class="field wide">
+            <span>ที่อยู่</span>
+            <textarea name="address" placeholder="บ้านเลขที่ หมู่ ซอย ตำบล อำเภอ จังหวัด รหัสไปรษณีย์"></textarea>
+          </label>
+        </section>
+
+        <section class="form-section">
+          <h2>ข้อมูลสุขภาพและการเข้าสู่ระบบ</h2>
+
+          <div class="form-grid">
+            <label class="field">
+              <span>กรุ๊ปเลือด (Blood Group)</span>
+              <select name="bloodGroup" required>
+                <option value="">--เลือกกรุ๊ปเลือด--</option>
+                <option value="A">A</option>
+                <option value="B">B</option>
+                <option value="AB">AB</option>
+                <option value="O">O</option>
+              </select>
+            </label>
+
+            <label class="field">
+              <span>Rh Factor</span>
+              <select name="rhFactor" required>
+                <option value="">--เลือก Rh--</option>
+                <option value="+">Rh+</option>
+                <option value="-">Rh-</option>
+              </select>
+            </label>
+          </div>
+
+          <label class="field wide">
+            <span>โรคประจำตัว (หากไม่มีโปรดระบุ “ไม่มี”)</span>
+            <input name="disease" placeholder="โปรดระบุโรคประจำตัว" />
+          </label>
+
+          <label class="field wide">
+            <span>รหัสผ่านสำหรับเข้าสู่ระบบ (Password)</span>
+            <input name="password" type="password" minlength="8" placeholder=".........." required />
+          </label>
+        </section>
+
+        <button class="submit-btn" type="submit">บันทึกผู้บริจาค</button>
+      </form>
+    </main>
+  </div>
+
+  <script src="../api.js"></script>
+  <script src="shared-topbar-sidebar.js"></script>
+  <script src="add-donor.js"></script>
+</body>
+</html>

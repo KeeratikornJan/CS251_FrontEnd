@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard | BloodBank Staff</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <link rel="stylesheet" href="shared-topbar-sidebar.css" />
+  <link rel="stylesheet" href="dashboard.css" />
+  <link rel="stylesheet" href="shared-ui.css" />
+</head>
+<body data-active-menu="dashboard">
+  <div id="layoutRoot">
+    <main class="page-content" id="pageContent">
+      <section class="page-head">
+        <h1>ระบบจัดการคลังเลือด</h1>
+      </section>
+
+      <div class="stat-cards" id="statCards">
+        <div class="stat-card">
+          <div class="stat-icon blue"><i class="fa-solid fa-users"></i></div>
+          <div class="stat-body">
+            <div class="stat-label">จำนวนผู้บริจาคทั้งหมด</div>
+            <div class="stat-value" id="statDonors">—</div>
+            <div class="stat-unit">คน</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon green"><i class="fa-solid fa-prescription-bottle-medical"></i></div>
+          <div class="stat-body">
+            <div class="stat-label">ถุงเลือดพร้อมใช้</div>
+            <div class="stat-value" id="statBags">—</div>
+            <div class="stat-unit">ยูนิต</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon orange"><i class="fa-solid fa-clock"></i></div>
+          <div class="stat-body">
+            <div class="stat-label">ใกล้หมดอายุ (&lt;7 วัน)</div>
+            <div class="stat-value" id="statExpiring">—</div>
+            <div class="stat-unit">ยูนิต</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon purple"><i class="fa-solid fa-truck-medical"></i></div>
+          <div class="stat-body">
+            <div class="stat-label">การจ่ายเลือดวันนี้</div>
+            <div class="stat-value" id="statDispensed">—</div>
+            <div class="stat-unit">รายการ</div>
+          </div>
+        </div>
+        <div class="stat-card" id="expiredCard">
+          <div class="stat-icon red"><i class="fa-solid fa-circle-xmark"></i></div>
+          <div class="stat-body">
+            <div class="stat-label">ถุงเลือดหมดอายุ</div>
+            <div class="stat-value" id="statExpired">—</div>
+            <div class="stat-unit">ยูนิต (ต้องทำลาย)</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="dashboard-body">
+        <div class="stock-panel">
+          <h2>สต็อกเลือด</h2>
+          <div class="table-card">
+            <table>
+              <thead>
+                <tr>
+                  <th>กรุ๊ปเลือด</th>
+                  <th>จำนวน (ยูนิต)</th>
+                  <th>สถานะ</th>
+                </tr>
+              </thead>
+              <tbody id="stockTableBody">
+                <tr><td class="empty-state" colspan="3"><i class="fa-solid fa-spinner fa-spin"></i> กำลังโหลด...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="alert-panel">
+          <h2><i class="fa-solid fa-triangle-exclamation"></i> แจ้งเตือนสำคัญ</h2>
+          <div id="alertList">
+            <div class="empty-state">กำลังโหลด...</div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="../api.js"></script>
+  <script src="shared-topbar-sidebar.js"></script>
+  <script src="dashboard.js"></script>
+</body>
+</html>

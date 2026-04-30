@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Donor Profile | Blood Bank</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="donor-style.css">
+</head>
+<body class="dashboard-body donor-portal">
+    <div class="background-animation"></div>
+
+    <div class="dashboard-wrapper">
+        <!-- Sidebar -->
+        <aside class="sidebar donor-sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="#da292e"/>
+                    </svg>
+                    <h2 style="margin: 0; font-family: 'Outfit'; font-weight: 700; color: #4a5568;">BloodBank</h2>
+                </div>
+                <button class="close-sidebar-btn" id="closeSidebarBtn">&times;</button>
+            </div>
+            <div class="sidebar-menu">
+                <a href="donor-portal.html" class="menu-item">
+                    <i class="fa-solid fa-table-columns"></i> Dashboard
+                </a>
+                <a href="donation-history.html" class="menu-item">
+                    <i class="fa-solid fa-history"></i> ประวัติการบริจาค
+                </a>
+                <a href="donor-profile.html" class="menu-item active">
+                    <i class="fa-solid fa-user-circle"></i> ข้อมูลส่วนตัว
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Wrapper -->
+        <div class="main-wrapper" id="mainContent">
+            <!-- Topbar -->
+            <header class="topbar">
+                <button class="menu-toggle" id="menuToggle">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+                <div style="flex: 1;"></div>
+                <div class="user-profile">
+                    <div class="user-info">
+                        <div class="user-name" id="topbarName">กำลังโหลด...</div>
+                        <div class="user-id" id="topbarId"></div>
+                    </div>
+                    <button id="logoutBtn" class="logout-btn" style="border: 1px solid var(--primary); background: white; color: var(--primary); border-radius: 8px; padding: 6px 16px; display: flex; align-items: center; gap: 8px; font-weight: 500; cursor: pointer;">
+                        <i class="fa-solid fa-sign-out-alt"></i> Logout
+                    </button>
+                </div>
+            </header>
+
+            <!-- Content -->
+            <main class="dashboard-content">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                    <h1 class="page-title" style="margin-bottom: 0;">ข้อมูลส่วนตัว (Profile)</h1>
+                </div>
+
+                <div id="alertBox" class="alert" style="display:none; margin-bottom:1.5rem;"></div>
+
+                <div class="stat-card" style="padding: 3rem; max-width: 900px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); border-color: #f1f1f1;">
+                    <div id="profileContent" style="color: #718096; text-align: center; padding: 2rem;">
+                        <i class="fa-solid fa-spinner fa-spin fa-2x"></i>
+                        <p style="margin-top: 1rem;">กำลังโหลดข้อมูล...</p>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script src="../api.js"></script>
+    <script>
+        // Populate topbar
+        const user = getAuthUser();
+        document.getElementById('topbarName').textContent = user?.fullName ? `คุณ${user.fullName}` : (user?.username || 'ผู้บริจาค');
+        document.getElementById('topbarId').textContent = user?.id ? `DON-${String(user.id).padStart(5, '0')}` : '';
+
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            localStorage.removeItem('auth_token');
+            localStorage.removeItem('auth_user');
+            window.location.replace("../index.html");
+        });
+
+        // Sidebar toggle
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const closeSidebarBtn = document.getElementById('closeSidebarBtn');
+        if (menuToggle && sidebar) menuToggle.addEventListener('click', () => sidebar.classList.toggle('active'));
+        if (closeSidebarBtn && sidebar) closeSidebarBtn.addEventListener('click', () => sidebar.classList.remove('active'));
+
+        function rhLabel(rh) { return rh === '+' ? 'Positive (+)' : 'Negative (-)'; }
+        function genderLabel(g) { return g === 'M' ? 'ชาย' : g === 'F' ? 'หญิง' : g || '—'; }
+
+        async function loadProfile() {
+            const container = document.getElementById('profileContent');
+            try {
+                const p = await apiGet('/api/donors/me/profile');
+                const statusLabel = p.status === 1 ? 'ปกติ' : 'ระงับสิทธิ์';
+                const statusColor = p.status === 1 ? '#38a169' : '#e53e3e';
+
+                container.innerHTML = `
+                    <span class="profile-section-title">ข้อมูลส่วนตัว</span>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">ชื่อ-นามสกุล</label>
+                            <input type="text" class="form-control profile-input-gray" value="${p.name || '—'}" disabled>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">เลขบัตรประชาชน</label>
+                            <input type="text" class="form-control profile-input-gray" value="${p.nationalId || '—'}" disabled style="color: var(--primary);">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">เพศ</label>
+                            <input type="text" class="form-control profile-input-gray" value="${genderLabel(p.gender)}" disabled>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">วันเกิด</label>
+                            <input type="text" class="form-control profile-input-gray" value="${p.birthday || '—'}" disabled>
+                        </div>
+                    </div>
+
+                    <span class="profile-section-title">ข้อมูลติดต่อ</span>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">เบอร์โทรศัพท์</label>
+                            <input type="text" class="form-control profile-input-gray" value="${p.phone || '—'}" disabled>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">อีเมล</label>
+                            <input type="text" class="form-control profile-input-gray" value="${p.email || '—'}" disabled>
+                        </div>
+                        <div class="form-group" style="grid-column: 1 / -1;">
+                            <label class="form-label">ที่อยู่</label>
+                            <textarea class="form-control profile-input-gray" disabled style="min-height:80px;">${p.place || '—'}</textarea>
+                        </div>
+                    </div>
+
+                    <span class="profile-section-title">ข้อมูลสุขภาพ</span>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">กรุ๊ปเลือด</label>
+                            <input type="text" class="form-control profile-input-gray" value="${p.bloodGroup || '—'}" disabled style="color: var(--primary);">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Rh Factor</label>
+                            <input type="text" class="form-control profile-input-gray" value="${rhLabel(p.rhFactor)}" disabled style="color: var(--primary);">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">โรคประจำตัว</label>
+                            <input type="text" class="form-control profile-input-gray" value="${p.congenitalDisease || '—'}" disabled>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">สถานะบัญชี</label>
+                            <input type="text" class="form-control profile-input-gray" value="${statusLabel}" disabled style="color:${statusColor}; font-weight:700;">
+                        </div>
+                    </div>
+                `;
+            } catch (err) {
+                container.innerHTML = `<div style="color:#e53e3e; text-align:center; padding:2rem;">ไม่สามารถโหลดข้อมูลได้: ${err.message}</div>`;
+            }
+        }
+
+        loadProfile();
+    </script>
+</body>
+</html>
